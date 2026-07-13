@@ -1,6 +1,7 @@
 /* CCAR-F Study — router + render. 바닐라, 의존성 없음. */
 (function () {
   var C = window.CCARF;
+  var J = window.CCARF_JOURNAL;
   var view = document.getElementById('view');
   var tabsEl = document.getElementById('tabs');
   var fmeta = document.getElementById('fmeta');
@@ -25,7 +26,7 @@
   });
 
   /* ---------- tabs ---------- */
-  var TABS = [{ h: '#/overview', t: '개요' }]
+  var TABS = [{ h: '#/overview', t: '개요' }, { h: '#/journal', t: '학습로그' }]
     .concat(C.DOMAINS.map(function (d) { return { h: '#/' + d.id, t: d.code }; }))
     .concat([{ h: '#/resources', t: '자료' }]);
   function renderTabs(active) {
@@ -178,6 +179,43 @@
       + '<div class="callout">⚠️ 서드파티(WikiDocs·GitHub·연습문제)는 <b>시험 감각·오답 패턴</b>용. 사실 근거는 항상 공식(docs·Academy)으로 교차검증. task statement 세부는 공식 exam guide로 확정.</div></section>';
   }
 
+  function journal() {
+    if (!J) return '<section><h1>학습 로그</h1><p class="lede">아직 기록이 없습니다.</p></section>';
+    var maxT = 5;
+    var h = '<section><span class="eyebrow">Study Journal</span><h1>학습 로그</h1>'
+      + '<p class="lede">우리가 공부한 것과 <b>다음에 풀 문제</b>. 세션마다 갱신 · 🔥 streak ' + J.streak + '일 · ' + esc(J.location) + '</p></section>';
+
+    if (J.next) {
+      h += '<section><div class="nextcard"><div class="nl">▶ 다음 문제 · ' + esc(J.next.dom) + '-' + esc(J.next.ses) + '</div>'
+        + '<div class="nt">' + esc(J.next.title) + '</div><div class="np">' + esc(J.next.problem) + '</div>'
+        + (J.next.hint ? '<div class="nh"><b>보기</b> · ' + esc(J.next.hint) + '</div>' : '') + '</div></section>';
+    }
+
+    h += '<section><div class="sec-head"><span class="eyebrow">Progress</span><h2>진도 (studied)</h2></div><div class="jprog">'
+      + J.progress.map(function (p) {
+        var w = Math.round(p.conf / maxT * 100);
+        return '<div class="jp"><div class="c">' + esc(p.code) + '</div><div><div class="nm">' + esc(p.ko) + '</div>'
+          + '<div class="bar" style="margin-top:5px"><span style="width:' + w + '%"></span></div></div>'
+          + '<div class="cf">' + p.conf + '/' + p.target + '</div></div>';
+      }).join('') + '</div></section>';
+
+    if (J.reviewDue && J.reviewDue.length) {
+      h += '<section><div class="sec-head"><span class="eyebrow">Spaced Review</span><h2>복습 예정</h2></div><div class="duechips">'
+        + J.reviewDue.map(function (r) { return '<span class="duechip">' + esc(r.item) + ' · <b>' + esc(r.when) + '</b></span>'; }).join('') + '</div></section>';
+    }
+
+    h += '<section><div class="sec-head"><span class="eyebrow">Timeline</span><h2>세션 타임라인</h2></div><div class="timeline">'
+      + J.sessions.slice().reverse().map(function (s) {
+        return '<div class="tl"><div class="th"><span class="ss">' + esc(s.dom) + '-' + esc(s.ses) + '</span>'
+          + '<span class="dt">' + esc(s.date) + '</span><span class="md">' + esc(s.mode) + '</span></div>'
+          + '<div class="cv">' + esc(s.covered) + '</div>'
+          + '<div class="ins">' + esc(s.insight) + '</div>'
+          + (s.analogy ? '<div class="an">🔧 ' + esc(s.analogy) + '</div>' : '')
+          + (s.result ? '<div class="rs">✔ ' + esc(s.result) + '</div>' : '') + '</div>';
+      }).join('') + '</div></section>';
+    return h;
+  }
+
   /* ---------- router ---------- */
   function route() {
     var hash = location.hash || '#/overview';
@@ -185,6 +223,7 @@
     var html, active = hash;
     var d = byId(key);
     if (d) { html = domain(d); }
+    else if (key === 'journal') { html = journal(); active = '#/journal'; }
     else if (key === 'resources') { html = resources(); active = '#/resources'; }
     else { html = overview(); active = '#/overview'; }
     view.innerHTML = html;
