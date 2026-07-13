@@ -1,409 +1,409 @@
-/* CCAR-F Study — content (data layer). 바닐라, 빌드 없음.
- * 초안(v0.1). 공식 소스 기반 증류. task statement 세부는 공식 exam guide로 검증 예정.
- * 출처: docs.claude.com · anthropic.com/engineering · modelcontextprotocol.io */
+/* CCAR-F Study — content (data layer). Vanilla, no build.
+ * Draft (v0.2, English-only). Distilled from official sources; task-statement wording pending the official exam guide.
+ * Sources: docs.claude.com · anthropic.com/engineering · modelcontextprotocol.io */
 
 const META = {
-  version: 'v0.1 · draft',
+  version: 'v0.2 · draft',
   updated: '2026-07-13',
   exam: [
-    { v: '60', l: '문항 (scenario-based)' },
-    { v: '4 / 6', l: '시나리오 랜덤 출제' },
-    { v: '720', l: '합격선 / 1000' },
-    { v: '120min', l: '제한시간' },
-    { v: 'closed-book', l: 'AI 금지 · 프록터링' }
+    { v: '60', l: 'questions (scenario-based)' },
+    { v: '4 / 6', l: 'scenarios drawn at random' },
+    { v: '720', l: 'pass mark / 1000' },
+    { v: '120min', l: 'time limit' },
+    { v: 'closed-book', l: 'no AI · proctored' }
   ],
-  note: '시험은 closed-book·시나리오 기반 — 암기가 아니라 제약 하 아키텍처 판단을 본다.'
+  note: 'The exam is closed-book and scenario-based — it tests architectural judgment under constraints, not memorization.'
 };
 
 const PATH = [
-  { n: '01', t: 'Claude 101', tag: '기초', d: 'Claude 사용 패턴·역량의 기준선' },
-  { n: '02', t: 'AI Fluency: Framework & Foundations', tag: '기초', d: '협업·위임·분별의 개념틀' },
-  { n: '03', t: 'Building Applications with the Claude API', tag: 'D1·D4·D5', d: 'API·structured output·production (핵심)' },
-  { n: '04', t: 'Introduction to Model Context Protocol', tag: 'D2', d: 'MCP tools·resources·prompts' },
-  { n: '05', t: 'Model Context Protocol: Advanced Topics', tag: 'D2', d: 'transport·보안·서버 설계' },
-  { n: '06', t: 'Introduction to Subagents', tag: 'D1', d: 'orchestrator–worker 멀티에이전트' },
-  { n: '07', t: 'Introduction to Agent Skills', tag: 'D3·D1', d: 'Skills로 에이전트 확장' }
+  { n: '01', t: 'Claude 101', tag: 'basics', d: 'Baseline of Claude usage patterns and capabilities' },
+  { n: '02', t: 'AI Fluency: Framework & Foundations', tag: 'basics', d: 'Collaboration, delegation, discernment framework' },
+  { n: '03', t: 'Building Applications with the Claude API', tag: 'D1·D4·D5', d: 'API, structured output, production patterns (core)' },
+  { n: '04', t: 'Introduction to Model Context Protocol', tag: 'D2', d: 'MCP tools, resources, prompts' },
+  { n: '05', t: 'Model Context Protocol: Advanced Topics', tag: 'D2', d: 'Transport, security, server design' },
+  { n: '06', t: 'Introduction to Subagents', tag: 'D1', d: 'Orchestrator–worker multi-agent' },
+  { n: '07', t: 'Introduction to Agent Skills', tag: 'D3·D1', d: 'Extend agents with Skills' }
 ];
 
 const LOOP = [
-  { n: '01 COURSE', t: '코스', d: 'Academy 코스로 개념 큰 그림' },
-  { n: '02 DOCS', t: '문서', d: 'docs.claude.com으로 정밀·정확' },
-  { n: '03 FIELD', t: '실무 글', d: 'engineering 글로 왜/언제 판단' },
-  { n: '04 BUILD', t: '실습', d: '직접 만들어 손으로 체화' },
-  { n: '05 DRILL', t: '문제', d: '문제로 시험 감각·오답 패턴' },
-  { n: '06 DISTILL', t: '증류', d: '노트 → 이 앱으로 정리' }
+  { n: '01 COURSE', t: 'Course', d: 'Big picture from the Academy course' },
+  { n: '02 DOCS', t: 'Docs', d: 'Precision from docs.claude.com' },
+  { n: '03 FIELD', t: 'Field', d: 'Judgment (why/when) from engineering posts' },
+  { n: '04 BUILD', t: 'Build', d: 'Internalize by building it yourself' },
+  { n: '05 DRILL', t: 'Drill', d: 'Exam feel & wrong-answer patterns from practice' },
+  { n: '06 DISTILL', t: 'Distill', d: 'Distill into notes → this app' }
 ];
 
 const SCHEDULE = [
-  { n: 'W1 · 07/13', d: 'D1 前', r: 'agentic loop·orchestration' },
-  { n: 'W2 · 07/20', d: 'D1 後', r: 'multi-agent·hooks·state' },
-  { n: 'W3 · 07/27', d: 'D3', r: 'Claude Code (강점)' },
-  { n: 'W4 · 08/03', d: 'D4', r: 'prompt·structured output' },
-  { n: 'W5 · 08/10', d: 'D2', r: 'tool design·MCP' },
-  { n: 'W6 · 08/17', d: 'D5', r: 'context·reliability' },
-  { n: 'W7 · 08/24', d: '시나리오 랩', r: '6개 end-to-end' },
-  { n: 'W8 · 08/31', d: '드릴 앱', r: '문항·시뮬 확장' },
-  { n: 'W9 · 09/07', d: '모의', r: '풀 모의 + 약점 보강' },
-  { n: 'W10 · 09/14', d: '응시 ▸', r: '최종 리뷰·버퍼', exam: true }
+  { n: 'W1 · Jul 13', d: 'D1 pt.1', r: 'agentic loop · orchestration' },
+  { n: 'W2 · Jul 20', d: 'D1 pt.2', r: 'multi-agent · hooks · state' },
+  { n: 'W3 · Jul 27', d: 'D3', r: 'Claude Code (strength)' },
+  { n: 'W4 · Aug 3', d: 'D4', r: 'prompt · structured output' },
+  { n: 'W5 · Aug 10', d: 'D2', r: 'tool design · MCP' },
+  { n: 'W6 · Aug 17', d: 'D5', r: 'context · reliability' },
+  { n: 'W7 · Aug 24', d: 'Scenario Lab', r: '6 scenarios end-to-end' },
+  { n: 'W8 · Aug 31', d: 'Drill App', r: 'expand questions · sims' },
+  { n: 'W9 · Sep 7', d: 'Mock', r: 'full mocks + weak areas' },
+  { n: 'W10 · Sep 14', d: 'Exam ▸', r: 'final review · buffer', exam: true }
 ];
 
 const LIBRARY = [
-  { t: 'Anthropic Academy', tag: 'Official · 무료', d: '13개 자기주도 코스. CCA-F 권장 학습 경로의 본체.', url: 'https://anthropic.skilljar.com' },
-  { t: '공식 인증 페이지', tag: 'Official', d: 'CCA-F 자격·응시·exam guide. Partner Network(무료)·좌석 예약.', url: 'https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request' },
-  { t: 'docs.claude.com', tag: 'Official · 정밀', d: '모든 사실의 1차 출처. Claude Code·Agent SDK·MCP·Prompt·Context.', url: 'https://docs.claude.com' },
-  { t: 'Anthropic Engineering', tag: 'Official · 실무', d: 'Building Effective Agents · Writing tools · Context engineering · Agent Skills.', url: 'https://www.anthropic.com/engineering' },
-  { t: 'WikiDocs 「CCA-F 실전 대비서」', tag: '한국어 · 문제', d: '5도메인 요약카드·핵심용어·판단 시나리오·연습문항·미니 모의·핸즈온 랩·플래시카드.', url: 'https://wikidocs.net/book/19518' },
-  { t: 'GitHub 대비 자료', tag: '무료 · 다국어', d: 'paullarionov(13개국어 guide·PDF·Anki) · daronyondem(exam guide).', url: 'https://github.com/paullarionov/claude-certified-architect' }
+  { t: 'Anthropic Academy', tag: 'Official · free', d: '13 self-paced courses. The core of the recommended CCA-F path.', url: 'https://anthropic.skilljar.com' },
+  { t: 'Official certification page', tag: 'Official', d: 'CCA-F eligibility, exam, guide. Partner Network (free) & seat booking.', url: 'https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request' },
+  { t: 'docs.claude.com', tag: 'Official · precise', d: 'Primary source for every fact. Claude Code · Agent SDK · MCP · Prompt · Context.', url: 'https://docs.claude.com' },
+  { t: 'Anthropic Engineering', tag: 'Official · field', d: 'Building Effective Agents · Writing tools · Context engineering · Agent Skills.', url: 'https://www.anthropic.com/engineering' },
+  { t: 'CCA-F prep book (WikiDocs, Korean)', tag: 'practice', d: 'Per-domain summary cards, key terms, judgment scenarios, practice questions, mini-mocks, hands-on labs, flashcards.', url: 'https://wikidocs.net/book/19518' },
+  { t: 'GitHub prep materials', tag: 'Free · multi-lang', d: 'paullarionov (13-language guide, PDF, Anki) · daronyondem (exam guide).', url: 'https://github.com/paullarionov/claude-certified-architect' }
 ];
 
 const DOMAINS = [
   {
-    id: 'd1', code: 'D1', name: 'Agentic Architecture & Orchestration', ko: '에이전트 설계·조율',
+    id: 'd1', code: 'D1', name: 'Agentic Architecture & Orchestration', ko: 'agent design & orchestration',
     weight: 27, ts: 7, conf: 3, order: 1,
-    tagline: '에이전트 loop 하나가 나머지 도메인이 매달리는 뼈대. 가장 큰 도메인.',
-    essence: '정형 workflow와 자율 agent를 구분하고, agentic loop(맥락 수집→행동→검증→반복)와 멀티에이전트 조율을 상황에 맞게 설계하는 능력.',
+    tagline: 'The agentic loop is the backbone the other domains hang on. The biggest domain.',
+    essence: 'Distinguishing structured workflows from autonomous agents, and designing the agentic loop (gather context → act → verify → repeat) and multi-agent orchestration to fit the situation.',
     concepts: [
-      { t: 'Augmented LLM (빌딩블록)', d: 'retrieval·tools·memory로 강화된 LLM. 스스로 검색 쿼리 생성·도구 선택·기억 결정. 명확히 문서화된 인터페이스가 핵심.' },
-      { t: 'Workflow vs Agent', d: 'workflow = 미리 정해진 코드 경로로 조율. agent = 런타임에 스스로 도구·과정 결정. 스텝 수가 예측 가능하면 workflow, open-ended면 agent.' },
-      { t: 'Agentic loop', d: 'gather context → take action → verify work → repeat. 검증 피드백으로 오류가 누적되기 전에 자기교정.' },
-      { t: '5가지 workflow 패턴', d: 'prompt chaining(순차+게이트) · routing(분류→전문경로) · parallelization(sectioning 병렬 / voting 신뢰도) · orchestrator-workers(중앙이 분해·위임·종합) · evaluator-optimizer(생성↔피드백 반복).' },
-      { t: 'Multi-agent (orchestrator–worker)', d: 'subagent는 context window를 격리하고 병렬 탐색 후 distilled 요약(1–2k 토큰)만 반환. 이득=격리·병렬, 비용=토큰↑·조율 복잡·오류 누적.' },
-      { t: '검증(verify)의 3형태', d: '규칙 기반(linter가 가장 견고) · visual feedback(스크린샷) · LLM-as-judge(퍼지 기준, 덜 견고하나 유용).' },
-      { t: 'Agentic search vs RAG', d: 'agentic = grep/bash로 즉시 탐색(정확·투명·유지 쉬움). semantic/RAG = 사전 임베딩(빠르나 부정확). agentic 우선, 부족할 때 RAG.' },
-      { t: '3대 원칙', d: 'Simplicity(필요할 때만 복잡도) · Transparency(계획 노출) · ACI(agent-computer interface: 도구 문서·예시·엣지케이스, poka-yoke로 실수 방지).' }
+      { t: 'Augmented LLM (building block)', d: 'An LLM enhanced with retrieval, tools, and memory. It generates its own search queries, selects tools, and decides what to retain. Clear, documented interfaces are key.' },
+      { t: 'Workflow vs Agent', d: 'Workflow = orchestration through predefined code paths. Agent = the model dynamically directs its own process and tool use at runtime. Predictable step count → workflow; open-ended → agent.' },
+      { t: 'Agentic loop', d: 'gather context → take action → verify work → repeat. The verification feedback lets the system self-correct before errors compound.' },
+      { t: '5 workflow patterns', d: 'prompt chaining (sequential + gates) · routing (classify → specialized path) · parallelization (sectioning for speed / voting for confidence) · orchestrator-workers (a central LLM decomposes, delegates, synthesizes) · evaluator-optimizer (generate ↔ feedback loop).' },
+      { t: 'Multi-agent (orchestrator–worker)', d: 'Subagents isolate the context window, explore in parallel, and return only a distilled summary (1–2k tokens). Gains = isolation + parallelism; costs = more tokens, coordination complexity, compounding error.' },
+      { t: 'Verification (3 forms)', d: 'rule-based (a linter is the most robust) · visual feedback (screenshots) · LLM-as-judge (fuzzy criteria, less robust but useful).' },
+      { t: 'Agentic search vs RAG', d: 'Agentic = grep/bash to search on the spot (accurate, transparent, easy to maintain). Semantic/RAG = pre-computed embeddings (fast but less accurate). Prefer agentic; use RAG when it falls short.' },
+      { t: '3 principles', d: 'Simplicity (add complexity only when needed) · Transparency (show the plan) · ACI, the agent-computer interface (tool docs, examples, edge cases; "poka-yoke" tools to prevent mistakes).' }
     ],
     terms: [
-      { a: 'Workflow', b: 'Agent', why: '둘 다 agentic system이지만 제어 위치가 다름 — 코드 고정 vs 모델 런타임 결정.' },
-      { a: 'Orchestrator-workers', b: 'Parallelization(sectioning)', why: 'orchestrator는 서브태스크를 런타임에 동적 결정, sectioning은 미리 정해진 독립 조각.' },
-      { a: 'Routing', b: 'Orchestrator', why: 'routing은 분류 후 단일 경로, orchestrator는 분해+다수 위임+종합.' },
-      { a: 'Agentic search', b: 'Semantic search(RAG)', why: '즉시 탐색(정확) vs 사전 임베딩(빠름·부정확). 기본은 agentic.' }
+      { a: 'Workflow', b: 'Agent', why: 'Both are agentic systems, but control lives in different places — fixed code vs the model deciding at runtime.' },
+      { a: 'Orchestrator-workers', b: 'Parallelization (sectioning)', why: 'Orchestrator decides subtasks dynamically at runtime; sectioning is fixed, independent pieces decided in advance.' },
+      { a: 'Routing', b: 'Orchestrator', why: 'Routing classifies then follows one fixed path; orchestrator decomposes + delegates to many + synthesizes.' },
+      { a: 'Agentic search', b: 'Semantic search (RAG)', why: 'Search on the spot (accurate) vs pre-embedded (fast, less accurate). Default to agentic.' }
     ],
     judgments: [
-      '스텝 수가 예측 가능한가? → workflow(chaining/routing) vs 자율 agent.',
-      '서브태스크 구성이 입력에 따라 달라지나? → orchestrator-workers vs 고정 parallelization.',
-      'subagent 추가가 값어치 있나? (컨텍스트 격리·병렬 이득 vs 토큰·조율 비용).',
-      '검증을 무엇으로? 규칙 가능하면 linter, 안 되면 LLM-judge.',
-      '정지 조건·투명성을 어떻게 보장하나?'
+      'Is the step count predictable? → workflow (chaining/routing) vs autonomous agent.',
+      'Do subtasks depend on the input? → orchestrator-workers vs fixed parallelization.',
+      'Is a subagent worth adding? (isolation/parallelism gains vs token/coordination cost).',
+      'Verify with what? A linter if rules exist, otherwise LLM-as-judge.',
+      'How do you guarantee stop conditions & transparency?'
     ],
     traps: [
-      '"멀티에이전트가 항상 낫다" — X. 단순함이 우선, 필요할 때만 복잡도 추가.',
-      '모든 걸 자율 agent로 — 예측 가능한 태스크는 workflow가 더 안전·저렴.',
-      'RAG를 항상 먼저 — agentic search가 더 정확·유지 쉬움; RAG는 부족할 때.',
-      '도구를 많이 붙일수록 강해진다 — 과다·중복 도구는 오히려 방해.'
+      '"Multi-agent is always better" — no. Simplicity first; add complexity only when it earns its keep.',
+      'Making everything an autonomous agent — predictable tasks are safer and cheaper as a workflow.',
+      'Reaching for RAG first by default — agentic search is often more accurate and easier to maintain.',
+      '"More tools = more power" — too many or overlapping tools distract the agent.'
     ],
     scenario: {
-      s: '멀티에이전트 리서치 — 광범위 주제를 여러 소스에서 조사·종합.',
-      q: 'orchestrator에 모든 원문을 그대로 넣을까, subagent가 요약만 반환할까?',
-      a: 'subagent가 격리된 컨텍스트에서 탐색 후 1–2k 요약만 orchestrator에 반환.',
-      w: 'context rot 방지 + 병렬 + 토큰 절약. orchestrator는 종합에만 집중.'
+      s: 'Multi-agent research — survey and synthesize a broad topic from many sources.',
+      q: 'Feed all raw sources into the orchestrator, or have subagents return only summaries?',
+      a: 'Subagents explore in isolated context and return only 1–2k summaries to the orchestrator.',
+      w: 'Avoids context rot, enables parallelism, saves tokens; the orchestrator focuses on synthesis.'
     },
     quiz: [
-      { q: 'workflow와 agent의 핵심 구분은?', a: '제어 경로가 코드에 고정(workflow) vs 모델이 런타임에 결정(agent).' },
-      { q: 'orchestrator-workers는 언제 쓰나?', a: '서브태스크 구성이 입력에 따라 달라져 미리 못 정할 때.' },
-      { q: '가장 견고한 검증 형태는?', a: '명확히 정의된 규칙(예: linter). LLM-judge는 덜 견고.' },
-      { q: 'subagent의 주 이득 2가지?', a: '컨텍스트 격리 + 병렬 처리(요약만 반환).' }
+      { q: 'The core distinction between workflow and agent?', a: 'Whether the path is fixed in code (workflow) or decided by the model at runtime (agent).' },
+      { q: 'When do you use orchestrator-workers?', a: 'When subtask composition depends on the input and cannot be predefined.' },
+      { q: 'The most robust form of verification?', a: 'Clearly defined rules (e.g., a linter). LLM-as-judge is less robust.' },
+      { q: 'Two main benefits of a subagent?', a: 'Context isolation + parallelism (it returns only a summary).' }
     ],
     study: [
-      'Agentic loop 해부: gather context → take action → verify → repeat.',
-      'Workflow vs Agent 결정 기준.',
-      '5 workflow 패턴 + orchestrator–worker 트레이드오프.',
-      'Hooks / interception으로 결정론적 제어.',
-      'Session & state, resume, 체크포인트.',
-      'Task decomposition, stop 조건, 폭주 방지.'
+      'Anatomy of the agentic loop: gather context → act → verify → repeat.',
+      'Deciding workflow vs agent.',
+      '5 workflow patterns + orchestrator–worker tradeoffs.',
+      'Hooks / interception for deterministic control.',
+      'Session & state, resume, checkpoints.',
+      'Task decomposition, stop conditions, avoiding runaway loops.'
     ],
     practice: [
-      'Messages API tool-use로 최소 agent loop 구현(tool 1개 + 종료 조건).',
-      'orchestrator + 2 subagent 리서치 파이프라인 → multi-agent-research-system.',
-      '같은 과제를 workflow vs agent 두 설계로 → 트레이드오프 표.',
-      'Claude Code hook 1개(PostToolUse 로깅/차단)로 개입점 체감.'
+      'Build a minimal agent loop with the Messages API tool-use (1 tool + a stop condition).',
+      'Sketch an orchestrator + 2 subagents research pipeline → multi-agent-research-system.',
+      'Design the same task both as a workflow and as an agent → tradeoff table.',
+      'Write one Claude Code hook (PostToolUse logging/blocking) to feel the intervention point.'
     ],
-    lens: 'agentic loop ↔ HW verification loop(자극→응답→스코어보드→반복). multi-agent ↔ 파이프라인 IP 블록 조율·핸드셰이크. 종료 조건 = deadlock/livelock 방지.',
-    scenarios: '멀티에이전트 리서치 · 고객지원 · 코드생성',
+    lens: 'agentic loop ↔ HW verification loop (stimulus → response → scoreboard → repeat). multi-agent ↔ coordinating pipeline IP blocks / handshakes. stop conditions = deadlock/livelock prevention.',
+    scenarios: 'Multi-agent research · Customer support · Code generation',
     res: {
       course: [{ t: 'Introduction to Subagents', url: 'https://anthropic.skilljar.com' }, { t: 'Building Applications with the Claude API', url: 'https://anthropic.skilljar.com', note: 'agent workflows' }],
-      docs: [{ t: 'Building Effective AI Agents', url: 'https://www.anthropic.com/research/building-effective-agents', note: 'workflow/agent 패턴 원전' }, { t: 'Building agents with the Claude Agent SDK', url: 'https://claude.com/blog/building-agents-with-the-claude-agent-sdk' }, { t: 'docs — Agent SDK · Tool use', url: 'https://docs.claude.com' }],
-      free: [{ t: 'WikiDocs 실전 대비서 · 도메인1', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide_ko.md', url: 'https://github.com/paullarionov/claude-certified-architect' }]
+      docs: [{ t: 'Building Effective AI Agents', url: 'https://www.anthropic.com/research/building-effective-agents', note: 'the workflow/agent patterns source' }, { t: 'Building agents with the Claude Agent SDK', url: 'https://claude.com/blog/building-agents-with-the-claude-agent-sdk' }, { t: 'docs — Agent SDK · Tool use', url: 'https://docs.claude.com' }],
+      free: [{ t: 'WikiDocs prep book · Domain 1', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide (multi-language)', url: 'https://github.com/paullarionov/claude-certified-architect' }]
     }
   },
 
   {
-    id: 'd3', code: 'D3', name: 'Claude Code Config & Workflows', ko: 'Claude Code 설정·운용',
+    id: 'd3', code: 'D3', name: 'Claude Code Config & Workflows', ko: 'Claude Code configuration',
     weight: 20, ts: 6, conf: 4, order: 2,
-    tagline: '실무 강점 도메인. 경험을 시험 앵글로 형식화하는 게 관건.',
-    essence: 'CLAUDE.md·commands·skills·hooks·permissions·headless로 Claude Code를 개발 워크플로우와 CI에 설정·운용하는 능력.',
+    tagline: 'A practical strength — the work is formalizing that experience into exam-shaped judgment.',
+    essence: 'Configuring and operating Claude Code across dev workflows and CI using CLAUDE.md, commands, skills, hooks, permissions, and headless mode.',
     concepts: [
-      { t: 'CLAUDE.md 계층', d: 'enterprise › project › user 우선순위. 자동 로드되는 메모리, @import, walk-up 탐색. 사전 로드 컨텍스트 + just-in-time(grep/glob) 조합.' },
-      { t: 'Agent Skills', d: 'instructions/scripts/resources 폴더. Claude가 필요 시 동적으로 발견·로드해 전문 에이전트로. SKILL.md = YAML frontmatter(name·description) + 본문.' },
-      { t: 'Progressive disclosure (3레벨)', d: 'L1 name·description 메타를 시스템 프롬프트에 사전 로드 → L2 관련 판단 시 SKILL.md 본문 로드 → L3 참조 파일은 필요할 때만. 번들 컨텍스트는 사실상 무한.' },
-      { t: 'Skill vs MCP vs slash command', d: 'skill = 절차적 지식·워크플로우 캡슐(온디맨드). MCP = 외부 도구/데이터 연결. slash command = 사용자 트리거 프롬프트. skill과 MCP는 상보적.' },
-      { t: 'Plan mode & permissions', d: '계획→실행 분리로 안전. settings.json의 allow/deny 규칙, permission 모드로 도구 사용 통제.' },
-      { t: 'Hooks', d: 'PreToolUse/PostToolUse 등 라이프사이클 개입 지점으로 결정론적 제어(로깅·차단·주입) — 모델 판단이 아닌 코드로 강제.' },
-      { t: 'Headless / CI', d: 'claude -p 원샷·배치로 비대화 실행. GitHub Actions에서 PR 리뷰 등 파이프라인 통합, 출력 파싱.' },
-      { t: 'Agent SDK 관계', d: 'Claude Code를 구동하는 harness(구 Claude Code SDK)가 다른 agent도 구동. compaction·subagent 격리 등 컨텍스트 관리 제공.' }
+      { t: 'CLAUDE.md hierarchy', d: 'Priority enterprise › project › user. Auto-loaded memory, @import, walk-up discovery. Pre-loaded context combined with just-in-time retrieval (grep/glob).' },
+      { t: 'Custom commands & Skills', d: 'Slash commands and Agent Skills. A skill is a folder Claude discovers and loads on demand. SKILL.md = YAML frontmatter (name·description) + body.' },
+      { t: 'Progressive disclosure (3 levels)', d: 'L1: name·description metadata pre-loaded into the system prompt → L2: full SKILL.md loaded when relevant → L3: referenced files only when needed. Bundled context is effectively unbounded.' },
+      { t: 'Skill vs MCP vs slash command', d: 'Skill = a capsule of procedural knowledge/workflow (on demand). MCP = a connection to external tools/data. Slash command = a user-triggered prompt. Skills and MCP are complementary.' },
+      { t: 'Plan mode & permissions', d: 'Separating planning from execution for safety. settings.json allow/deny rules and permission modes govern tool use.' },
+      { t: 'Hooks', d: 'Lifecycle intervention points (PreToolUse/PostToolUse, etc.) give deterministic control — logging, blocking, injection — enforced by code, not model judgment.' },
+      { t: 'Headless / CI', d: 'claude -p for one-shot/batch, non-interactive runs. Integrate into pipelines (e.g., PR review in GitHub Actions), parse the output.' },
+      { t: 'Agent SDK relation', d: 'The harness that powers Claude Code (formerly Claude Code SDK) can power other agents too. It provides context management (compaction, subagent isolation).' }
     ],
     terms: [
-      { a: 'Skill', b: 'MCP', why: '절차/지식 캡슐(온디맨드 로드) vs 외부 시스템 연결. 경쟁이 아니라 상보.' },
-      { a: 'Skill', b: 'Slash command', why: '모델이 자동 트리거(name/description 판단) vs 사용자가 명시 호출.' },
-      { a: 'CLAUDE.md project/user/enterprise', b: '', why: '범위·우선순위 차이(enterprise가 최상위).' },
-      { a: 'PreToolUse hook', b: 'PostToolUse hook', why: '도구 실행 전 검증/차단 vs 실행 후 로깅/후처리.' }
+      { a: 'Skill', b: 'MCP', why: 'A knowledge/procedure capsule (loaded on demand) vs a connection to external systems. Complementary, not competing.' },
+      { a: 'Skill', b: 'Slash command', why: 'The model auto-triggers a skill (by name/description) vs the user explicitly invokes a command.' },
+      { a: 'CLAUDE.md project/user/enterprise', b: '', why: 'Different scope and priority (enterprise is highest).' },
+      { a: 'PreToolUse hook', b: 'PostToolUse hook', why: 'Validate/block before a tool runs vs log/post-process after it runs.' }
     ],
     judgments: [
-      '반복 지식을 skill vs command vs CLAUDE.md 중 어디에 둘까?',
-      'headless로 CI에 넣을 때 권한·출력을 어떻게 통제하나?',
-      'hook로 무엇을 결정론적으로 강제할까?',
-      'progressive disclosure로 컨텍스트를 아끼는 skill 구조?'
+      'Where does recurring knowledge go — skill vs command vs CLAUDE.md?',
+      'Running headless in CI: how do you control permissions and output?',
+      'What do you enforce deterministically with a hook?',
+      'How do you structure a skill so progressive disclosure saves context?'
     ],
     traps: [
-      '모든 걸 CLAUDE.md에 몰아넣기 — 컨텍스트 낭비. skill의 progressive disclosure 활용.',
-      'skill과 MCP를 경쟁 관계로 봄 — 상보적.',
-      'CI에 full permission 부여 — 위험. allowlist·plan 모드로.',
-      'skill을 사용자가 매번 수동 호출해야 한다고 생각 — 모델이 자동 트리거.'
+      'Cramming everything into CLAUDE.md — wastes context. Use a skill\'s progressive disclosure.',
+      'Treating skills and MCP as competitors — they are complementary.',
+      'Granting full permissions in CI — risky. Use an allowlist and plan mode.',
+      'Assuming the user must invoke a skill manually every time — the model auto-triggers it.'
     ],
     scenario: {
-      s: 'CI/CD — PR마다 자동 코드 리뷰를 붙이려 한다.',
-      q: '대화형 세션을 열어둘까, Actions에서 headless claude -p로 돌릴까?',
-      a: 'headless claude -p + 권한 allowlist + 비대화 실행.',
-      w: '파이프라인은 비대화·재현·최소권한이 필요. 대화형은 CI에 부적합.'
+      s: 'CI/CD — you want an automated code review on every PR.',
+      q: 'Keep an interactive session open, or run headless claude -p in Actions?',
+      a: 'Headless claude -p + a permission allowlist + non-interactive run.',
+      w: 'A pipeline needs to be non-interactive, reproducible, and least-privilege. Interactive sessions do not fit CI.'
     },
     quiz: [
-      { q: 'progressive disclosure 3레벨은?', a: 'name/description 메타 → SKILL.md 본문 → 참조 파일.' },
-      { q: 'skill과 slash command의 트리거 차이?', a: '모델 자동 판단 vs 사용자 명시 호출.' },
-      { q: 'CLAUDE.md 우선순위 순서?', a: 'enterprise › project › user.' },
-      { q: 'PreToolUse hook의 용도?', a: '도구 실행 전 검증·차단(결정론적 제어).' }
+      { q: 'The 3 levels of progressive disclosure?', a: 'name/description metadata → the SKILL.md body → referenced files.' },
+      { q: 'Trigger difference: skill vs slash command?', a: 'Model auto-triggers vs user explicitly invokes.' },
+      { q: 'CLAUDE.md priority order?', a: 'enterprise › project › user.' },
+      { q: 'Purpose of a PreToolUse hook?', a: 'Validate/block before a tool runs (deterministic control).' }
     ],
     study: [
-      'CLAUDE.md 계층·메모리·@import·walk-up.',
-      'Custom commands & Skills(SKILL.md) 캡슐화 판단.',
-      'Plan mode, settings.json allow/deny·hooks.',
-      'Headless claude -p 배치·CI 통합.',
-      'Subagents(Task) 위임, MCP 서버 연결.',
+      'CLAUDE.md hierarchy, memory, @import, walk-up.',
+      'Custom commands & Skills (SKILL.md), when to encapsulate as which.',
+      'Plan mode, settings.json allow/deny, hooks.',
+      'Headless claude -p batch & CI integration.',
+      'Subagents (Task) delegation, connecting MCP servers.',
       'Iterative refinement, batch processing.'
     ],
     practice: [
-      '워크스페이스에 /ccar-* 커스텀 커맨드 실제 작성.',
-      'settings.json permission allowlist + hook 1개 구성·확인.',
-      'headless 배치: claude -p로 파일 묶음 요약/변환.',
-      'GitHub Actions에서 headless PR 리뷰 → claude-code-for-CI.'
+      'Author real /ccar-* custom commands in the workspace.',
+      'Configure a settings.json permission allowlist + one hook, and verify behavior.',
+      'Headless batch: summarize/transform a set of files with claude -p.',
+      'Run headless PR review in GitHub Actions → claude-code-for-CI.'
     ],
-    lens: '이미 로컬 스킬·CLAUDE.md 계층을 실전 운용 중. "왜 이렇게 짰나"를 시험 선택지 언어로 옮기는 연습이 곧 득점.',
-    scenarios: '코드생성 · 개발자 생산성 · CI/CD',
+    lens: 'Already running local skills and a CLAUDE.md hierarchy in practice. The win is translating "why I built it this way" into the exam\'s answer language.',
+    scenarios: 'Code generation · Developer productivity · CI/CD',
     res: {
-      course: [{ t: 'Introduction to Agent Skills', url: 'https://anthropic.skilljar.com' }, { t: 'Academy — Claude Code 트레이닝', url: 'https://anthropic.skilljar.com', note: '카탈로그 확인' }],
-      docs: [{ t: 'docs — Claude Code', url: 'https://docs.claude.com', note: 'CLAUDE.md·hooks·headless·settings' }, { t: 'Agent Skills (engineering)', url: 'https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills' }],
-      free: [{ t: 'WikiDocs 실전 대비서 · 도메인3', url: 'https://wikidocs.net/book/19518' }, { t: 'daronyondem 가이드', url: 'https://github.com/daronyondem/claude-architect-exam-guide' }]
+      course: [{ t: 'Introduction to Agent Skills', url: 'https://anthropic.skilljar.com' }, { t: 'Academy — Claude Code training', url: 'https://anthropic.skilljar.com', note: 'check the catalog' }],
+      docs: [{ t: 'docs — Claude Code', url: 'https://docs.claude.com', note: 'CLAUDE.md · hooks · headless · settings' }, { t: 'Agent Skills (engineering)', url: 'https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills' }],
+      free: [{ t: 'WikiDocs prep book · Domain 3', url: 'https://wikidocs.net/book/19518' }, { t: 'daronyondem exam guide', url: 'https://github.com/daronyondem/claude-architect-exam-guide' }]
     }
   },
 
   {
-    id: 'd4', code: 'D4', name: 'Prompt Engineering & Structured Output', ko: '프롬프트·구조화 출력',
+    id: 'd4', code: 'D4', name: 'Prompt Engineering & Structured Output', ko: 'prompting & structured output',
     weight: 20, ts: 6, conf: 3, order: 3,
-    tagline: 'production에서 신뢰 가능한 출력 계약을 얻는 법. 추출·자동화의 뼈대.',
-    essence: 'production에서 신뢰·검증 가능한 출력을 얻는 프롬프트 기법과 구조화 출력(JSON/schema) 강제 능력.',
+    tagline: 'Getting a reliable output contract in production. The backbone of extraction/automation scenarios.',
+    essence: 'Prompting techniques and enforced structured output (JSON/schema) that produce reliable, verifiable results in production.',
     concepts: [
-      { t: '기법 순서(권장)', d: '① 명확·직접 ② multishot 예시 ③ Claude가 생각하게(CoT) ④ XML 태그 구조화 ⑤ 역할(system prompt) ⑥ 응답 prefill ⑦ 복잡 프롬프트 chaining. 쉬운 것부터, eval로 검증.' },
-      { t: '성공기준·eval 먼저', d: '프롬프트 엔지니어링 전에 성공기준 + 경험적 테스트를 세운다. 지연·비용은 프롬프트가 아니라 모델 선택으로 더 쉽게 풀리기도 한다.' },
-      { t: 'Structured output (JSON)', d: 'tool use / tool_choice 강제가 가장 견고(스키마 보장). 보조로 prefill(`{`로 시작), XML 태그로 감싸기, stop sequences.' },
-      { t: '예시 curation', d: '엣지케이스 나열보다 다양·정전형(canonical) 대표 예시. 예시는 LLM에게 "천 마디 말"급 신호.' },
-      { t: 'System prompt altitude', d: '너무 구체(취약) vs 너무 모호(신호 부족) 사이 goldilocks. 배경/지시/도구/출력 섹션으로 구조화(XML·Markdown).' },
-      { t: 'CoT / thinking', d: '복잡 추론은 생각 공간을 부여하면 정확도↑. 단 토큰·지연 비용.' },
-      { t: '검증·복구', d: 'schema 검증으로 형식 이탈·환각을 잡고 재시도. 출력 계약을 코드로 보증.' }
+      { t: 'Technique order (recommended)', d: '① be clear & direct ② multishot examples ③ let Claude think (CoT) ④ XML tags for structure ⑤ a role (system prompt) ⑥ prefill the response ⑦ chain complex prompts. Start simple; verify with evals.' },
+      { t: 'Success criteria & evals first', d: 'Set success criteria and empirical tests before prompt engineering. Latency/cost are sometimes solved by picking a different model, not by prompting.' },
+      { t: 'Structured output (JSON)', d: 'Forcing tool use / tool_choice is the most robust (guarantees the schema). Supporting moves: prefill (start with `{`), wrap in XML tags, stop sequences.' },
+      { t: 'Example curation', d: 'Prefer diverse, canonical representative examples over an exhaustive list of edge cases. Examples are a "picture worth a thousand words" for an LLM.' },
+      { t: 'System prompt altitude', d: 'A goldilocks zone between too specific (fragile) and too vague (weak signal). Structure it into sections (background, instructions, tools, output) with XML/Markdown.' },
+      { t: 'CoT / thinking', d: 'Giving room to reason raises accuracy on complex tasks — at a token/latency cost.' },
+      { t: 'Verify & recover', d: 'Catch format drift and hallucination with schema validation and retry. Enforce the output contract in code.' }
     ],
     terms: [
-      { a: 'prefill', b: 'stop sequence', why: '응답 시작을 강제 vs 종료를 강제.' },
-      { a: 'tool use 강제', b: '자연어 JSON 요청', why: '스키마 보장 vs 형식 이탈 가능. 100% 필요하면 강제.' },
-      { a: 'XML 태그', b: 'Markdown', why: '둘 다 구조 구분 수단. 태그가 파싱·경계에 명확.' },
-      { a: 'CoT', b: '즉답', why: '추론 노출로 정확도↑(비용↑) vs 빠름.' }
+      { a: 'prefill', b: 'stop sequence', why: 'Force the start of the response vs force where it ends.' },
+      { a: 'forced tool use', b: 'natural-language JSON request', why: 'Guarantees the schema vs allows format drift. If 100% needed, force it.' },
+      { a: 'XML tags', b: 'Markdown', why: 'Both delineate structure; tags are clearer for parsing and boundaries.' },
+      { a: 'CoT', b: 'direct answer', why: 'Expose reasoning for higher accuracy (higher cost) vs faster.' }
     ],
     judgments: [
-      'JSON이 100% 필요 → tool_choice 강제 vs prefill+XML?',
-      '형식 이탈이 잦다 → 어떤 기법을 추가?',
-      '예시를 몇 개·어떤 종류로?',
-      '지연/비용 문제 → 프롬프트 개선 vs 모델 교체?'
+      'JSON must be 100% valid → force tool_choice vs prefill+XML?',
+      'Format drifts often → which technique do you add?',
+      'How many examples, and of what kind?',
+      'Latency/cost problem → improve the prompt vs switch the model?'
     ],
     traps: [
-      '"JSON으로 답해줘"만 하고 강제 안 함 — 형식 이탈.',
-      '프롬프트로 지연을 해결하려 함 — 모델/구조 문제일 수 있음.',
-      '엣지케이스만 잔뜩 예시 — 대표 예시가 더 효과적.',
-      '과도하게 구체적인 system prompt — 취약·유지비↑.'
+      'Just saying "answer in JSON" without forcing it — format drift.',
+      'Trying to fix latency with prompting — it may be a model/architecture issue.',
+      'Piling on only edge-case examples — representative examples work better.',
+      'An over-specific system prompt — fragile and costly to maintain.'
     ],
     scenario: {
-      s: '구조화 데이터 추출 — 문서를 검증된 JSON으로.',
-      q: '"JSON으로 답해줘"라고 지시할까, tool schema로 강제할까?',
-      a: 'tool use / tool_choice로 스키마를 강제하고 schema 검증을 붙인다.',
-      w: '자연어 지시는 형식 이탈 위험. 강제 + 검증이 출력 계약을 보장.'
+      s: 'Structured data extraction — turn a document into validated JSON.',
+      q: 'Instruct "answer in JSON", or force it with a tool schema?',
+      a: 'Force the schema with tool use / tool_choice and add schema validation.',
+      w: 'Natural-language instruction risks format drift; forcing + validation guarantees the output contract.'
     },
     quiz: [
-      { q: '가장 견고한 JSON 강제 방법은?', a: 'tool use + tool_choice 강제.' },
-      { q: 'prefill의 효과는?', a: '응답 시작을 고정(서두 제거, 형식 유도).' },
-      { q: '프롬프트 엔지니어링 전에 필요한 것?', a: '성공기준 + 경험적 eval.' },
-      { q: 'system prompt altitude란?', a: '너무 구체/모호 사이의 goldilocks 지점.' }
+      { q: 'Most robust way to force JSON?', a: 'Forced tool use + tool_choice.' },
+      { q: 'What does prefill do?', a: 'Pins the start of the response (removes preamble, steers format).' },
+      { q: 'What is needed before prompt engineering?', a: 'Success criteria + empirical evals.' },
+      { q: 'What is system prompt altitude?', a: 'The goldilocks point between too specific and too vague.' }
     ],
     study: [
-      '프롬프트 원칙: 명확·직접, system 역할, multishot, CoT, XML, prefill.',
-      'Structured output: tool-use/JSON schema로 형식 강제.',
-      '검증·복구: schema 검증, 실패 모드 대응.',
-      'Eval 루프: 평가셋으로 프롬프트 A/B.',
-      '토큰·비용 감각(예시/CoT의 값어치).'
+      'Prompting principles: clear & direct, role, multishot, CoT, XML, prefill.',
+      'Structured output: force format with tool-use / JSON schema.',
+      'Verify & recover: schema validation, failure modes.',
+      'Eval loop: A/B prompt versions against an eval set.',
+      'Token/cost sense (the payoff of examples/CoT).'
     ],
     practice: [
-      '같은 추출을 (a) 자연어 vs (b) tool schema 강제로 짜고 안정성 비교.',
-      'prefill + XML로 출력 형식 고정 실험.',
-      '문서 → 검증 JSON 파이프라인 → structured-data-extraction.',
-      '작은 eval 세트로 프롬프트 두 버전 점수화.'
+      'Do the same extraction (a) natural-language vs (b) forced tool schema, compare stability.',
+      'Pin the output format with prefill + XML and test.',
+      'Build a document → validated JSON pipeline → structured-data-extraction.',
+      'Score two prompt versions with a small eval set.'
     ],
-    lens: 'structured output = 인터페이스 프로토콜 정의. schema = 포트 계약, 검증 = assertion, 형식 이탈 = 프로토콜 위반.',
-    scenarios: '구조화 데이터 추출 · 개발자 생산성',
+    lens: 'Structured output = defining an interface protocol. Schema = the port contract, validation = assertions, format drift = a protocol violation.',
+    scenarios: 'Structured data extraction · Developer productivity',
     res: {
-      course: [{ t: 'Building Applications with the Claude API', url: 'https://anthropic.skilljar.com', note: 'prompting·structured output' }],
-      docs: [{ t: 'docs — Prompt engineering', url: 'https://docs.claude.com', note: '기법·structured/JSON output' }, { t: 'Anthropic Cookbook', url: 'https://github.com/anthropics/anthropic-cookbook', note: '동작 예제' }],
-      free: [{ t: 'WikiDocs 실전 대비서 · 도메인4', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide_ko.md', url: 'https://github.com/paullarionov/claude-certified-architect' }]
+      course: [{ t: 'Building Applications with the Claude API', url: 'https://anthropic.skilljar.com', note: 'prompting · structured output' }],
+      docs: [{ t: 'docs — Prompt engineering', url: 'https://docs.claude.com', note: 'techniques · structured/JSON output' }, { t: 'Anthropic Cookbook', url: 'https://github.com/anthropics/anthropic-cookbook', note: 'working examples' }],
+      free: [{ t: 'WikiDocs prep book · Domain 4', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide (multi-language)', url: 'https://github.com/paullarionov/claude-certified-architect' }]
     }
   },
 
   {
-    id: 'd2', code: 'D2', name: 'Tool Design & MCP Integration', ko: '툴 설계·MCP 통합',
+    id: 'd2', code: 'D2', name: 'Tool Design & MCP Integration', ko: 'tool design & MCP',
     weight: 18, ts: 5, conf: 3, order: 4,
-    tagline: 'Claude에 능력을 붙이는 법. tool description 품질이 곧 호출 정확도.',
-    essence: '비결정적 agent가 안전·효율적으로 쓸 수 있는 도구를 설계하고, MCP로 외부 능력을 표준 방식으로 통합하는 능력.',
+    tagline: 'How you give Claude capabilities. Tool description quality is call accuracy.',
+    essence: 'Designing tools a non-deterministic agent can use safely and efficiently, and integrating external capabilities via MCP in a standard way.',
     concepts: [
-      { t: '도구는 API 래핑이 아니다', d: '결정적 시스템 ↔ 비결정적 agent 간 계약. agent는 제한된 컨텍스트로 행동 가능성을 인지 → 전체 list가 아니라 search/filter 도구가 필요.' },
-      { t: '좋은 이름·설명', d: '모호하지 않은 파라미터명(user_id, not user). "신입에게 설명하듯" 암묵 맥락을 명시. 서비스별 namespace(asana_search). 작은 설명 개선이 큰 향상.' },
-      { t: '도구 통합(consolidation)', d: '여러 저수준 연산을 고수준 하나로(schedule_event = 가용성 찾기 + 예약, get_customer_context). agentic 연산을 도구 안으로 옮긴다.' },
-      { t: '고신호·토큰 효율 응답', d: '의미있는 식별자(name, image_url) > uuid/mime_type. pagination·filtering·truncation, response_format enum(concise/detailed). Claude Code는 기본 25k 토큰 제한.' },
-      { t: '구조화 에러', d: '불투명 코드가 아니라 구체적·실행가능한 개선을 제시 → agent가 자가복구하고 토큰 효율 전략으로 이동.' },
-      { t: 'MCP 아키텍처', d: 'host · client · server. primitives = tools(행동) / resources(읽을 데이터) / prompts(사용자 템플릿). 인증·API 호출을 표준으로 처리.' },
-      { t: 'Transport & 보안', d: 'stdio(로컬 프로세스) vs SSE/HTTP(원격·멀티유저). tool annotations로 파괴적/open-world 접근 공개. 권한·신뢰 경계·프롬프트 인젝션 주의.' },
-      { t: '도구 개수 절제', d: '"많다고 좋지 않다." 고임팩트 워크플로우를 겨냥한 소수의 신중한 도구. 과다·중복은 효율 전략을 방해.' }
+      { t: 'A tool is not an API wrapper', d: 'It is a contract between a deterministic system and a non-deterministic agent. The agent perceives possible actions with limited context → it needs search/filter tools, not full lists.' },
+      { t: 'Good names & descriptions', d: 'Unambiguous parameter names (user_id, not user). Make implicit context explicit ("describe it to a new hire"). Namespace by service (asana_search). Small description tweaks yield big gains.' },
+      { t: 'Tool consolidation', d: 'Fold several low-level operations into one high-level tool (schedule_event = find availability + book; get_customer_context). Move agentic computation into the tool.' },
+      { t: 'High-signal, token-efficient responses', d: 'Meaningful identifiers (name, image_url) over uuid/mime_type. Pagination, filtering, truncation; a response_format enum (concise/detailed). Claude Code defaults to a 25k-token cap.' },
+      { t: 'Structured errors', d: 'Not an opaque code — offer specific, actionable improvements so the agent self-recovers and moves to a token-efficient strategy.' },
+      { t: 'MCP architecture', d: 'host · client · server. Primitives = tools (actions) / resources (data to read) / prompts (user templates). Handles auth & API calls as a standard.' },
+      { t: 'Transport & security', d: 'stdio (local process) vs SSE/HTTP (remote, multi-user). Tool annotations disclose destructive or open-world access. Watch permissions, trust boundaries, prompt injection.' },
+      { t: 'Restraint on tool count', d: '"More is not better." A few thoughtful tools aimed at high-impact workflows. Too many or overlapping tools derail efficient strategies.' }
     ],
     terms: [
-      { a: 'tool', b: 'resource / prompt', why: 'MCP primitive — 모델이 호출하는 행동 vs 읽을 데이터 vs 사용자 템플릿.' },
-      { a: 'stdio', b: 'SSE / HTTP', why: '로컬 프로세스 transport vs 원격/네트워크 transport.' },
-      { a: 'list_X', b: 'search_X', why: '전체 반환(컨텍스트 낭비) vs 필터된 고신호(agent friendly).' },
-      { a: 'API endpoint', b: 'agent tool', why: '결정적↔결정적 계약 vs 결정적↔비결정적 계약.' }
+      { a: 'tool', b: 'resource / prompt', why: 'MCP primitives — an action the model calls vs data to read vs a user-triggered template.' },
+      { a: 'stdio', b: 'SSE / HTTP', why: 'Local-process transport vs remote/network transport.' },
+      { a: 'list_X', b: 'search_X', why: 'Return everything (wastes context) vs filtered, high-signal (agent-friendly).' },
+      { a: 'API endpoint', b: 'agent tool', why: 'A deterministic↔deterministic contract vs a deterministic↔non-deterministic contract.' }
     ],
     judgments: [
-      '로컬 서버면 stdio, 원격/멀티유저면 SSE/HTTP?',
-      '에러를 어떻게 구조화해 자가복구를 유도?',
-      '도구를 통합할까 쪼갤까(명확·구분되는 목적)?',
-      '식별자를 의미있게 반환(uuid → name)?',
-      '도구를 더 추가 vs 정리(과다는 방해)?'
+      'Local server → stdio; remote/multi-user → SSE/HTTP?',
+      'How do you shape an error so the agent self-recovers?',
+      'Consolidate or split a tool (clear, distinct purpose)?',
+      'Return meaningful identifiers (uuid → name)?',
+      'Add more tools vs prune (too many derail the agent)?'
     ],
     traps: [
-      '기존 REST API를 그대로 도구로 래핑 — agent affordance 무시.',
-      '도구를 최대한 많이 붙이기 — 과다·중복은 성능↓.',
-      'uuid를 그대로 반환 — 정밀도↓.',
-      '불투명 에러 코드 — 자가복구 불가.'
+      'Wrapping an existing REST API directly as a tool — ignores agent affordances.',
+      'Adding as many tools as possible — too many/overlapping hurts performance.',
+      'Returning raw uuids — reduces precision.',
+      'Opaque error codes — no self-recovery.'
     ],
     scenario: {
-      s: '구조화 추출/CI — 대량 로그에서 특정 이벤트를 찾아야 한다.',
-      q: 'read_logs(전체 반환)와 search_logs 중 무엇을 도구로?',
-      a: 'search_logs — 필터된 고신호만 반환.',
-      w: '전체 반환은 컨텍스트 폭발·토큰 낭비. agent는 제한 컨텍스트로 인지한다.'
+      s: 'Structured extraction / CI — find a specific event in a large log.',
+      q: 'read_logs (return everything) or search_logs as the tool?',
+      a: 'search_logs — return only filtered, high-signal results.',
+      w: 'Returning everything explodes context and wastes tokens; the agent perceives with limited context.'
     },
     quiz: [
-      { q: '도구와 전통 API의 근본 차이?', a: '결정적↔비결정적 agent 간 계약. 제한 컨텍스트를 고려해야.' },
-      { q: 'stdio vs SSE 선택 기준?', a: '로컬 vs 원격/네트워크(멀티유저).' },
-      { q: '좋은 에러 응답이란?', a: '구체적·실행가능한 개선을 제시(자가복구).' },
-      { q: 'MCP의 3 primitive?', a: 'tools · resources · prompts.' }
+      { q: 'The fundamental difference between a tool and a traditional API?', a: 'A deterministic↔non-deterministic-agent contract; you must respect limited context.' },
+      { q: 'stdio vs SSE selection criterion?', a: 'Local vs remote/network (multi-user).' },
+      { q: 'What is a good error response?', a: 'Specific, actionable improvements (enables self-recovery).' },
+      { q: 'The 3 MCP primitives?', a: 'tools · resources · prompts.' }
     ],
     study: [
-      'Tool description best practice(when/how, 파라미터·반환 계약).',
-      'Structured error로 자가복구.',
+      'Tool description best practices (when/how, parameter & return contracts).',
+      'Structured errors for self-recovery.',
       'MCP host·client·server, primitives.',
-      'Transport stdio vs SSE/HTTP 선택.',
-      '보안 경계·프롬프트 인젝션.',
+      'Transport: stdio vs SSE/HTTP selection.',
+      'Security boundaries · prompt injection.',
       'Claude built-in tools.'
     ],
     practice: [
-      '최소 MCP 서버(tool 1–2개, stdio) → Claude Code에 연결·호출.',
-      '나쁜 description → 좋은 것으로 리팩터, 호출 정확도 관찰.',
-      '에러를 구조화 응답으로 바꿔 자가복구 유도.',
-      '스키마를 structured-extraction·CI/CD 시나리오에 매핑.'
+      'Write a minimal MCP server (1–2 tools, stdio) → connect & call from Claude Code.',
+      'Refactor a bad description into a good one, observe call accuracy.',
+      'Turn an error into a structured response to induce self-recovery.',
+      'Map a schema onto the structured-extraction / CI-CD scenarios.'
     ],
-    lens: 'tool schema = HW 블록의 포트/프로토콜 계약. 애매한 description = 부실한 인터페이스 문서 → 오호출. MCP transport = 버스 프로토콜 선택.',
-    scenarios: '구조화 추출 · 고객지원 · CI/CD',
+    lens: 'A tool schema = the port/protocol contract of a HW block. A vague description = poor interface docs → mis-calls. MCP transport = choosing the bus protocol.',
+    scenarios: 'Structured extraction · Customer support · CI/CD',
     res: {
       course: [{ t: 'Introduction to MCP', url: 'https://anthropic.skilljar.com' }, { t: 'MCP: Advanced Topics', url: 'https://anthropic.skilljar.com' }],
-      docs: [{ t: 'Writing effective tools for AI agents', url: 'https://www.anthropic.com/engineering/writing-tools-for-agents' }, { t: 'modelcontextprotocol.io', url: 'https://modelcontextprotocol.io', note: 'MCP 공식 스펙' }, { t: 'docs — MCP · Tool use', url: 'https://docs.claude.com' }],
-      free: [{ t: 'WikiDocs 실전 대비서 · 도메인2', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide_ko.md', url: 'https://github.com/paullarionov/claude-certified-architect' }]
+      docs: [{ t: 'Writing effective tools for AI agents', url: 'https://www.anthropic.com/engineering/writing-tools-for-agents' }, { t: 'modelcontextprotocol.io', url: 'https://modelcontextprotocol.io', note: 'official MCP spec' }, { t: 'docs — MCP · Tool use', url: 'https://docs.claude.com' }],
+      free: [{ t: 'WikiDocs prep book · Domain 2', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide (multi-language)', url: 'https://github.com/paullarionov/claude-certified-architect' }]
     }
   },
 
   {
-    id: 'd5', code: 'D5', name: 'Context Management & Reliability', ko: '컨텍스트 관리·신뢰성',
+    id: 'd5', code: 'D5', name: 'Context Management & Reliability', ko: 'context & reliability',
     weight: 15, ts: 5, conf: 3, order: 5,
-    tagline: '긴 상호작용을 버티게 하고 production을 안 죽게 만드는 법. 시나리오 곳곳에 스며든다.',
-    essence: '유한한 컨텍스트를 관리(compaction·외부 메모리·격리·JIT retrieval)하고 긴 작업·실패에 견고하게 만드는 능력.',
+    tagline: 'Keeping long interactions alive and production from dying. Smaller weight, but it seeps into every scenario.',
+    essence: 'Managing finite context (compaction, external memory, isolation, just-in-time retrieval) and making long tasks and failures robust.',
     concepts: [
-      { t: 'Context engineering vs prompt engineering', d: '후자 = 단일 태스크 지시 작성. 전자 = 멀티턴 전체 토큰 상태(시스템·도구·데이터·이력)를 큐레이션·유지하는 반복적 관리.' },
-      { t: 'Context rot / 유한 자원', d: '토큰이 늘수록 회상 정확도가 저하(attention은 n² 예산). diminishing returns — 모든 토큰이 attention 예산을 소모하므로 신호/잡음을 최적화.' },
-      { t: 'Compaction(요약)', d: '한계 근처에서 핵심(결정·미해결 버그)을 요약하고 재시작. 먼저 최대 recall → 이후 불필요한 도구 출력 제거로 precision.' },
-      { t: 'Structured note-taking(외부 메모리)', d: '컨텍스트 밖에 노트를 기록·회수(Claude Code to-do, Pokémon 목표 추적). 수천 스텝을 in-context 없이 유지.' },
-      { t: 'Sub-agent 격리', d: '전용 서브에이전트가 깨끗한 컨텍스트로 탐색 후 1–2k 요약만 조율 에이전트에 반환. 상세 탐색과 고수준 종합을 분리.' },
-      { t: 'Just-in-time retrieval', d: '경량 식별자(경로·URL·쿼리)만 유지하고 런타임에 로드. 메타데이터(폴더·이름·시간)가 신호. hybrid(일부 사전 로드 + 탐색).' },
-      { t: 'Prompt caching', d: '반복되는 접두(시스템·도구·문서)를 캐시해 비용·지연↓. cache breakpoint·TTL 관리. (docs 근거)' },
-      { t: '신뢰성', d: '재시도/backoff, 타임아웃, rate limit 대응, 부분 실패 시 graceful degradation, 검증·로깅으로 실패 감지·복구.' }
+      { t: 'Context engineering vs prompt engineering', d: 'The latter writes instructions for a single task. The former curates and maintains the entire token state (system, tools, data, history) across multi-turn interactions.' },
+      { t: 'Context rot / finite resource', d: 'As tokens grow, recall accuracy degrades (attention is an n² budget). Diminishing returns — every token spends the attention budget, so optimize signal-to-noise.' },
+      { t: 'Compaction (summarization)', d: 'Near the limit, summarize what matters (decisions, open bugs) and restart. First maximize recall, then improve precision by dropping redundant tool output.' },
+      { t: 'Structured note-taking (external memory)', d: 'Write notes outside the context window and retrieve later (Claude Code to-dos; tracking objectives across thousands of steps) — without keeping it all in-context.' },
+      { t: 'Sub-agent isolation', d: 'A dedicated subagent explores in a clean context and returns only a 1–2k summary to the coordinator. Separates detailed exploration from high-level synthesis.' },
+      { t: 'Just-in-time retrieval', d: 'Keep lightweight identifiers (paths, URLs, queries) and load at runtime. Metadata (folders, names, timestamps) is signal. Hybrid: some pre-loaded + exploration.' },
+      { t: 'Prompt caching', d: 'Cache repeated prefixes (system, tools, documents) to cut cost and latency. Manage cache breakpoints and TTL. (per docs)' },
+      { t: 'Reliability', d: 'Retries/backoff, timeouts, rate-limit handling, graceful degradation on partial failure, detection/logging/recovery of failures.' }
     ],
     terms: [
-      { a: 'context engineering', b: 'prompt engineering', why: '전체 토큰 상태 큐레이션(멀티턴) vs 단일 지시 작성.' },
-      { a: 'compaction', b: 'truncation', why: '핵심을 요약 보존 vs 단순 절단(핵심 소실 위험).' },
-      { a: 'external memory', b: 'in-context', why: '컨텍스트 밖 저장·회수 vs 안에 다 담기(context rot).' },
-      { a: 'JIT retrieval', b: 'pre-loading(RAG)', why: '런타임 로드(정확·유연) vs 사전 임베딩(빠름).' }
+      { a: 'context engineering', b: 'prompt engineering', why: 'Curating the whole token state (multi-turn) vs writing a single instruction.' },
+      { a: 'compaction', b: 'truncation', why: 'Summarize and preserve essentials vs simply cut (risking loss of key info).' },
+      { a: 'external memory', b: 'in-context', why: 'Store/retrieve outside the window vs keep it all inside (context rot).' },
+      { a: 'JIT retrieval', b: 'pre-loading (RAG)', why: 'Load at runtime (accurate, flexible) vs pre-embed (fast).' }
     ],
     judgments: [
-      '긴 작업 → compaction vs 외부 메모리 vs subagent 중 무엇을?',
-      '무엇을 사전 로드하고 무엇을 JIT로 가져올까?',
-      '재시도·타임아웃·degradation 전략을 어떻게?',
-      '무엇을 캐시하고 breakpoint를 어디에?'
+      'Long task → compaction vs external memory vs subagent?',
+      'What do you pre-load and what do you fetch just-in-time?',
+      'How do you handle retries/timeouts/degradation?',
+      'What do you cache and where is the breakpoint?'
     ],
     traps: [
-      '컨텍스트에 다 넣으면 좋다 — context rot로 정확도↓.',
-      'truncation으로 충분 — 핵심 소실. compaction이 낫다.',
-      'RAG가 항상 정답 — agentic/JIT가 더 정확할 때가 많다.',
-      '캐시 없이 반복 접두를 매번 전송 — 비용·지연 낭비.'
+      'Believing more context is better — context rot lowers accuracy.',
+      '"Truncation is enough" — loses essentials; compaction is better.',
+      'RAG is always the answer — agentic/JIT is often more accurate.',
+      'Re-sending a repeated prefix every time with no cache — wasted cost/latency.'
     ],
     scenario: {
-      s: '멀티에이전트 리서치/장기 작업 — 수천 스텝을 넘긴다.',
-      q: '모든 이력을 컨텍스트에 유지할까, 외부 노트 + compaction을 쓸까?',
-      a: '외부 메모리 + compaction + subagent 격리.',
-      w: 'context rot를 피하고 attention 예산을 보존. 핵심만 남기고 나머지는 밖에.'
+      s: 'Multi-agent research / long-horizon task — beyond thousands of steps.',
+      q: 'Keep the whole history in context, or use external notes + compaction?',
+      a: 'External memory + compaction + subagent isolation.',
+      w: 'Avoids context rot and preserves the attention budget; keep only essentials, offload the rest.'
     },
     quiz: [
-      { q: 'context rot이란?', a: '토큰이 늘수록 회상·정확도가 저하되는 현상.' },
-      { q: 'compaction이란?', a: '한계 근처에서 핵심을 요약하고 재시작하는 것.' },
-      { q: 'JIT retrieval의 이점?', a: '컨텍스트 절약 + 메타데이터 신호 + 인간 인지 모사.' },
-      { q: 'subagent가 컨텍스트에 주는 이득?', a: '격리된 탐색 후 요약만 반환(오염 방지).' }
+      { q: 'What is context rot?', a: 'Recall/accuracy degrading as tokens grow.' },
+      { q: 'What is compaction?', a: 'Summarizing essentials near the limit and restarting.' },
+      { q: 'Benefits of JIT retrieval?', a: 'Saves context + metadata signal + mirrors human cognition.' },
+      { q: 'What benefit does a subagent give context?', a: 'Isolated exploration returning only a summary (no pollution).' }
     ],
     study: [
-      'Context window 예산·토큰 카운팅.',
-      'Prompt caching(대상·breakpoint·TTL·비용).',
-      '긴 대화: 요약·압축·context editing·외부 메모리.',
-      '신뢰성: 재시도/backoff, 타임아웃, rate limit, degradation.',
-      '실패 감지·로깅·복구(관측).'
+      'Context window budget · token counting.',
+      'Prompt caching (what · breakpoint · TTL · cost).',
+      'Long conversations: summarize · compact · context editing · external memory.',
+      'Reliability: retries/backoff, timeouts, rate limits, degradation.',
+      'Failure detection · logging · recovery (observability).'
     ],
     practice: [
-      'prompt caching 전/후 토큰·비용·지연 측정.',
-      '긴 문서를 요약 체인으로 압축 후 QA 정확도 비교.',
-      '재시도·타임아웃 래퍼 작성, rate-limit 시뮬.',
-      '멀티에이전트에서 컨텍스트 예산 배분 설계.'
+      'Measure tokens/cost/latency before vs after prompt caching.',
+      'Compact a long document with a summarization chain, compare QA accuracy.',
+      'Write a retry/timeout wrapper; simulate rate limits.',
+      'Design context-budget allocation in a multi-agent setup.'
     ],
-    lens: 'token budget = 대역폭·버퍼 예산. context 관리 = 파이프라인 backpressure·caching. 재시도/degradation = fault tolerance·리던던시.',
-    scenarios: '멀티에이전트 리서치 · 고객지원',
+    lens: 'Token budget = bandwidth/buffer budget. Context management = pipeline backpressure & caching. Retries/degradation = fault tolerance & redundancy.',
+    scenarios: 'Multi-agent research · Customer support',
     res: {
-      course: [{ t: 'Building Applications with the Claude API', url: 'https://anthropic.skilljar.com', note: 'production·reliability' }],
+      course: [{ t: 'Building Applications with the Claude API', url: 'https://anthropic.skilljar.com', note: 'production · reliability' }],
       docs: [{ t: 'Effective context engineering', url: 'https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents' }, { t: 'Harnesses for long-running agents', url: 'https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents' }, { t: 'docs — Context windows · Prompt caching', url: 'https://docs.claude.com' }],
-      free: [{ t: 'WikiDocs 실전 대비서 · 도메인5', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide_ko.md', url: 'https://github.com/paullarionov/claude-certified-architect' }]
+      free: [{ t: 'WikiDocs prep book · Domain 5', url: 'https://wikidocs.net/book/19518' }, { t: 'GitHub guide (multi-language)', url: 'https://github.com/paullarionov/claude-certified-architect' }]
     }
   }
 ];
 
 const SCENARIOS = [
-  { slug: 'customer-support-resolution-agent', t: '고객지원 해결 에이전트', d: '티켓 triage + 해결 파이프라인', dom: 'D1·D2·D5' },
-  { slug: 'code-generation-with-claude-code', t: 'Claude Code 코드생성', d: '자율 PR 리뷰·코드 생성', dom: 'D3·D1' },
-  { slug: 'multi-agent-research-system', t: '멀티에이전트 리서치', d: 'orchestrator + 전문 subagent 검색·종합', dom: 'D1·D5' },
-  { slug: 'developer-productivity-with-claude', t: '개발자 생산성', d: 'IDE 통합, CLAUDE.md, 워크플로우 자동화', dom: 'D3·D4' },
-  { slug: 'claude-code-for-continuous-integration', t: 'CI/CD용 Claude Code', d: 'headless Claude를 빌드 파이프라인에', dom: 'D3·D2' },
-  { slug: 'structured-data-extraction', t: '구조화 데이터 추출', d: '문서 → 검증된 JSON schema', dom: 'D4·D2' }
+  { slug: 'customer-support-resolution-agent', t: 'Customer Support Resolution Agent', d: 'Ticket triage + resolution pipeline', dom: 'D1·D2·D5' },
+  { slug: 'code-generation-with-claude-code', t: 'Code Generation with Claude Code', d: 'Autonomous PR review & code generation', dom: 'D3·D1' },
+  { slug: 'multi-agent-research-system', t: 'Multi-Agent Research System', d: 'Orchestrator + specialized subagents search & synthesize', dom: 'D1·D5' },
+  { slug: 'developer-productivity-with-claude', t: 'Developer Productivity with Claude', d: 'IDE integration, CLAUDE.md, workflow automation', dom: 'D3·D4' },
+  { slug: 'claude-code-for-continuous-integration', t: 'Claude Code for CI/CD', d: 'Headless Claude in a build pipeline', dom: 'D3·D2' },
+  { slug: 'structured-data-extraction', t: 'Structured Data Extraction', d: 'Documents → validated JSON schema', dom: 'D4·D2' }
 ];
 
 window.CCARF = { META, PATH, LOOP, SCHEDULE, LIBRARY, DOMAINS, SCENARIOS };
