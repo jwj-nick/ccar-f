@@ -2,15 +2,15 @@
  * Full detail (wrong answers, weak items) stays private in the workspace (00_META/sessions, progress.md). App shows the distilled journal only. */
 
 const JOURNAL = {
-  updated: '2026-07-13',
-  streak: 1,
-  location: 'W1 · D1 in progress',
+  updated: '2026-07-18',
+  streak: 2,
+  location: 'W1 · D1 in progress (S2 done)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D1', ses: 'S2', title: 'Match the 5 workflow patterns',
-    problem: 'Which workflow pattern is each of these? — (a) Generate a translation draft → another model rates its quality → revise and repeat. (b) Run summarize, translate, and tone-analysis of one document in parallel, then merge. (c) Classify an incoming ticket by type and route it to a dedicated path.',
-    hint: 'Options: prompt chaining · routing · parallelization (sectioning) · orchestrator-workers · evaluator-optimizer. (c) is the same pattern as A from last session.'
+    dom: 'D1', ses: 'S3', title: 'Orchestrator-workers & the agent boundary',
+    problem: 'Routing and orchestrator-workers both branch to different work — what is the ONE difference that separates them? And at what point does an orchestrator stop being a workflow and become an agent?',
+    hint: 'Think about WHO decides the subtasks and WHEN — at authoring time (fixed) vs at runtime (dynamic).'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -24,7 +24,8 @@ const JOURNAL = {
 
   // Spaced review (interval repetition)
   reviewDue: [
-    { item: 'workflow vs agent criterion (can you predict the path/step count?)', when: 'Jul 14 · Jul 16 · Jul 20' }
+    { item: 'workflow vs agent criterion (can you predict the path/step count?)', when: 'Jul 14 · Jul 16 · Jul 20' },
+    { item: '5 workflow patterns — recognize by data-flow shape', when: 'Jul 19 · Jul 21 · Jul 25' }
   ],
 
   // Session timeline (rendered newest-first)
@@ -35,6 +36,13 @@ const JOURNAL = {
       insight: 'If code decides the next step at runtime it is a workflow; if the model decides, it is an agent. Litmus test = "can you predict/hardcode the path and step count before running?"',
       analogy: 'directed test = workflow · constrained-random/coverage closure = agent-like. An agent is flexible but costs more and compounds errors.',
       result: 'APPLY judgment (A=workflow, B=agent) correct'
+    },
+    {
+      date: '2026-07-18', dom: 'D1', ses: 'S2', mode: 'standard',
+      covered: '5 workflow patterns + recognizing them by data-flow shape',
+      insight: 'Read the SHAPE of the flow, not the concept: linear steps = chaining · classify→branch = routing · fan-out→merge = parallelization · runtime decomposition = orchestrator-workers · generate↔evaluate loop = evaluator-optimizer. Real systems compose patterns; the exam asks for the dominant one.',
+      analogy: 'chaining = pipeline stages with assertions · parallelization = parallel units / TMR voting · evaluator-optimizer = coverage-closure loop.',
+      result: 'Matched (a)=evaluator-optimizer, (b)=parallelization, (c)=routing (guided — reviewing next)'
     }
   ]
 };
