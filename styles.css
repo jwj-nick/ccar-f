@@ -214,6 +214,20 @@ ul.rlist .m{color:var(--ink-faint);font-size:.9em;display:block;}
 .scnitem .sd{color:var(--ink-soft);font-size:.83rem;margin-top:3px;}
 .scnitem .sm{font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);margin-top:7px;}
 
+/* transcripts */
+section.tscript{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:clamp(16px,3vw,24px);margin-top:18px;}
+.tnote{font-size:.82rem;color:var(--ink-faint);font-style:italic;margin:12px 0 4px;}
+.turn{display:flex;flex-direction:column;gap:3px;padding:12px 0;border-top:1px solid var(--line);}
+.turn .twho{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;}
+.turn.tutor .twho{color:var(--accent);}
+.turn.nick .twho{color:var(--good);}
+.turn .ttext{font-size:.94rem;line-height:1.6;color:var(--ink);max-width:74ch;}
+.turn.nick{padding-left:16px;border-left:2px solid var(--good-soft);}
+.turn.nick .ttext{color:var(--ink-soft);}
+.tflag{font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;text-transform:none;margin-left:8px;padding:1px 6px;border-radius:4px;}
+.tflag.wrong{color:var(--warn);background:var(--warn-soft);}
+.tflag.ok{color:var(--good);background:var(--good-soft);}
+
 /* lessons */
 section.lesson{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:clamp(16px,3vw,26px);margin-top:18px;}
 .lhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px;}

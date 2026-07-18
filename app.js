@@ -3,6 +3,7 @@
   var C = window.CCARF;
   var J = window.CCARF_JOURNAL;
   var L = window.CCARF_LESSONS;
+  var T = window.CCARF_TRANSCRIPTS;
   var view = document.getElementById('view');
   var tabsEl = document.getElementById('tabs');
   var fmeta = document.getElementById('fmeta');
@@ -27,7 +28,7 @@
   });
 
   /* ---------- tabs ---------- */
-  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }]
+  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }, { h: '#/transcripts', t: 'Transcripts' }]
     .concat(C.DOMAINS.map(function (d) { return { h: '#/' + d.id, t: d.code }; }))
     .concat([{ h: '#/resources', t: 'Resources' }]);
   function renderTabs(active) {
@@ -236,6 +237,23 @@
     return h;
   }
 
+  function transcripts() {
+    if (!T || !T.length) return '<section><h1>Transcripts</h1><p class="lede">No transcripts yet.</p></section>';
+    var h = '<section><span class="eyebrow">Transcripts</span><h1>Transcripts</h1>'
+      + '<p class="lede">The interactive sessions, turn by turn — not summarized. English translation of the original sessions; a wrong answer and its correction are kept, because that is where it clicks. Newest first.</p></section>';
+    h += T.slice().reverse().map(function (tr) {
+      var turns = tr.turns.map(function (u) {
+        var me = u.who === 'Nick';
+        var tag = u.wrong ? '<span class="tflag wrong">✗ wrong → corrected next</span>' : (u.correct ? '<span class="tflag ok">✓ correct</span>' : '');
+        return '<div class="turn ' + (me ? 'nick' : 'tutor') + '"><div class="twho">' + esc(u.who) + tag + '</div><div class="ttext">' + esc(u.text) + '</div></div>';
+      }).join('');
+      return '<section class="tscript"><div class="lhd"><span class="lss">' + esc(tr.dom) + '-' + esc(tr.ses) + '</span>'
+        + '<span class="ltt">' + esc(tr.title) + '</span><span class="ldt">' + esc(tr.date) + '</span></div>'
+        + '<div class="tnote">' + esc(tr.note) + '</div>' + turns + '</section>';
+    }).join('');
+    return h;
+  }
+
   /* ---------- router ---------- */
   function route() {
     var hash = location.hash || '#/overview';
@@ -245,6 +263,7 @@
     if (d) { html = domain(d); }
     else if (key === 'journal') { html = journal(); active = '#/journal'; }
     else if (key === 'lessons') { html = lessons(); active = '#/lessons'; }
+    else if (key === 'transcripts') { html = transcripts(); active = '#/transcripts'; }
     else if (key === 'resources') { html = resources(); active = '#/resources'; }
     else { html = overview(); active = '#/overview'; }
     view.innerHTML = html;
