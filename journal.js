@@ -39,10 +39,10 @@ const JOURNAL = {
     },
     {
       date: '2026-07-18', dom: 'D1', ses: 'S2', mode: 'standard',
-      covered: '5 workflow patterns + recognizing them by data-flow shape',
-      insight: 'Read the SHAPE of the flow, not the concept: linear steps = chaining · classify→branch = routing · fan-out→merge = parallelization · runtime decomposition = orchestrator-workers · generate↔evaluate loop = evaluator-optimizer. Real systems compose patterns; the exam asks for the dominant one.',
+      covered: '5 workflow patterns — recognized by data-flow shape (re-done solo, interactive)',
+      insight: 'Read the SHAPE of the flow, not the concept: linear steps = chaining · classify→branch = routing · fan-out→merge = parallelization · runtime decomposition = orchestrator-workers · generate↔evaluate loop = evaluator-optimizer. The money distinction: routing = pick from a fixed set of bins; orchestrator = build the bins at runtime and aggregate.',
       analogy: 'chaining = pipeline stages with assertions · parallelization = parallel units / TMR voting · evaluator-optimizer = coverage-closure loop.',
-      result: 'Matched (a)=evaluator-optimizer, (b)=parallelization, (c)=routing (guided — reviewing next)'
+      result: 'Solo-distinguished the two hardest pairs: routing↔orchestrator and voting↔evaluator-optimizer.'
     }
   ]
 };

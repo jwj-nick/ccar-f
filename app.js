@@ -2,6 +2,7 @@
 (function () {
   var C = window.CCARF;
   var J = window.CCARF_JOURNAL;
+  var L = window.CCARF_LESSONS;
   var view = document.getElementById('view');
   var tabsEl = document.getElementById('tabs');
   var fmeta = document.getElementById('fmeta');
@@ -26,7 +27,7 @@
   });
 
   /* ---------- tabs ---------- */
-  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }]
+  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }]
     .concat(C.DOMAINS.map(function (d) { return { h: '#/' + d.id, t: d.code }; }))
     .concat([{ h: '#/resources', t: 'Resources' }]);
   function renderTabs(active) {
@@ -216,6 +217,25 @@
     return h;
   }
 
+  function lessons() {
+    if (!L || !L.length) return '<section><h1>Lessons</h1><p class="lede">No lessons captured yet.</p></section>';
+    var h = '<section><span class="eyebrow">Lessons</span><h1>Lessons</h1>'
+      + '<p class="lede">The actual content we worked through, session by session — distilled. Newest first.</p></section>';
+    h += L.slice().reverse().map(function (le) {
+      var body = le.blocks.map(function (b) {
+        var inner = '<h3>' + esc(b.h) + '</h3>';
+        if (b.p) inner += '<p>' + esc(b.p) + '</p>';
+        if (b.list) inner += '<ul class="plain">' + b.list.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+        return '<div class="lblock">' + inner + '</div>';
+      }).join('');
+      return '<section class="lesson"><div class="lhd"><span class="lss">' + esc(le.dom) + '-' + esc(le.ses) + '</span>'
+        + '<span class="ltt">' + esc(le.title) + '</span><span class="ldt">' + esc(le.date) + '</span></div>'
+        + '<div class="lgoal"><span class="glab">Goal</span>' + esc(le.goal) + '</div>'
+        + body + '</section>';
+    }).join('');
+    return h;
+  }
+
   /* ---------- router ---------- */
   function route() {
     var hash = location.hash || '#/overview';
@@ -224,6 +244,7 @@
     var d = byId(key);
     if (d) { html = domain(d); }
     else if (key === 'journal') { html = journal(); active = '#/journal'; }
+    else if (key === 'lessons') { html = lessons(); active = '#/lessons'; }
     else if (key === 'resources') { html = resources(); active = '#/resources'; }
     else { html = overview(); active = '#/overview'; }
     view.innerHTML = html;

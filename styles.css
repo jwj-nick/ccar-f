@@ -214,6 +214,19 @@ ul.rlist .m{color:var(--ink-faint);font-size:.9em;display:block;}
 .scnitem .sd{color:var(--ink-soft);font-size:.83rem;margin-top:3px;}
 .scnitem .sm{font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);margin-top:7px;}
 
+/* lessons */
+section.lesson{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:clamp(16px,3vw,26px);margin-top:18px;}
+.lhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px;}
+.lhd .lss{font-family:var(--mono);font-size:.76rem;font-weight:700;color:var(--accent);}
+.lhd .ltt{font-weight:750;font-size:1.15rem;letter-spacing:-.01em;}
+.lhd .ldt{font-family:var(--mono);font-size:.74rem;color:var(--ink-faint);margin-left:auto;}
+.lgoal{font-size:.9rem;color:var(--ink-soft);margin:14px 0 4px;padding:10px 14px;background:var(--surface-2);border-radius:7px;}
+.lgoal .glab{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-right:8px;}
+.lblock{margin-top:18px;}
+.lblock h3{font-size:.98rem;font-weight:700;margin:0 0 6px;letter-spacing:-.005em;}
+.lblock p{margin:0;color:var(--ink-soft);font-size:.94rem;line-height:1.6;max-width:72ch;}
+.lblock ul.plain{margin-top:8px;}
+
 /* journal */
 .nextcard{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:10px;padding:20px 22px;}
 .nextcard .nl{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;}
