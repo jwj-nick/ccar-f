@@ -101,6 +101,18 @@ const LESSONS = [
       { h: 'Q5 — ladder: summarize one 20-page PDF into 5 bullets', p: 'Answer: an AUGMENTED LLM — one model call, no loop. A single agent is already too high (an agent is a loop, and there is nothing to loop on). A 5-subagent proposal is severe over-engineering (5× cost + merge/coordination, zero benefit). Rule: the lowest rung that works — here, one call.' },
       { h: 'Three things to firm up', p: '(1) A feedback loop does not by itself make an agent — a fixed generate↔evaluate loop is the evaluator-optimizer workflow. (2) On the ladder, drop to the LOWEST rung: a bounded one-shot task is an augmented LLM, not a single agent. (3) Verification must be independent and tamper-proof — never let the agent grade itself on a criterion it can edit.' }
     ]
+  },
+  {
+    id: 'd2-s1', dom: 'D2', ses: 'S1', date: '2026-07-19', title: 'A Tool Is Not an API (the finite-context contract)',
+    goal: 'Understand why a tool for an agent must be designed differently from a human-facing API.',
+    blocks: [
+      { h: 'The core idea', p: 'A tool is a contract between a deterministic system and a NON-deterministic, limited-context agent — not an API wrapper. That one reframe drives every D2 decision.' },
+      { h: 'Why a full-data API breaks for an agent', p: 'Give an agent list_users() that returns all 50,000 users. A human developer calling GET /users is fine — the human paginates and scrolls on their end. An agent cannot scroll: whatever a tool returns lands directly in its finite context window (the same finite window from D1-S4). Fifty thousand rows flood it, pollute its attention, and waste tokens — the agent cannot even reason over the result.' },
+      { h: 'So move the filtering INTO the tool', p: 'The tool must return high-signal, filtered results, not a full dump: search_users(role="admin", active=true) → 12 rows, not list_users() → 50,000. The narrowing that a human would do by hand has to be built into the tool itself. Same idea downstream: meaningful identifiers over raw uuids, pagination, and a concise/detailed response format.' },
+      { h: 'Exam so-what', p: 'When a question asks which tool design suits an agent, choose the one that respects limited context — search_X over list_X, high-signal responses. Returning everything, raw uuids, or opaque blobs are the wrong answers.' },
+      { h: 'HW lens', p: 'You would not dump a 50,000-line waveform to the block above — you design a probe that triggers and filters down to only the signals of interest. A tool for an agent is that probe.' },
+      { h: 'Next (S2)', p: 'The other face of "limited context": an agent decides WHICH tool to call from its name and description alone — it does not read full docs. So description quality = call accuracy, which is the S2 topic.' }
+    ]
   }
 ];
 

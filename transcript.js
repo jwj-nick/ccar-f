@@ -139,6 +139,20 @@ const TRANSCRIPTS = [
       { who: 'Nick', text: 'The verification method, the check items, and a detailed result report (a checklist).' },
       { who: 'Tutor', text: 'That is the evidence/traceability half — correct (the structured return from S4). The other half: who WROTE that report? If the DUT wrote it, however detailed, it is still grading itself. That is why your bench has an independent scoreboard / golden reference the DUT cannot touch. Vocabulary: a self-report is not proof (an agent can be confidently wrong); trustworthy verification is INDEPENDENT — outside the agent, on a criterion it cannot edit (programmatic reconciliation, a separate evaluator, citations). Anchor: "an independent scoreboard, not the DUT’s word" = "independent verification, not the agent’s self-confidence." All three weak spots cleared → D1 first pass complete.' }
     ]
+  },
+  {
+    id: 't-d2-s1', dom: 'D2', ses: 'S1', date: '2026-07-19', title: 'A Tool Is Not an API (interactive)',
+    note: 'English translation of the original Korean session. First D2 session.',
+    turns: [
+      { who: 'Tutor', text: 'You have designed register interfaces and bus protocols for 20 years, assuming the reader (an engineer or RTL) reads the whole datasheet and follows it exactly. An agent does not work that way. Scenario: a tool list_users() returns all 50,000 users as one JSON blob. A human calling GET /users is fine (they paginate). What goes wrong when an AGENT calls list_users(), and why is what is fine for a human API a problem for an agent tool? (hint: where do those 50,000 land — recall D1-S4.)' },
+      { who: 'Nick', text: 'The information is stored in the agent’s context. So a tool is needed, right?' },
+      { who: 'Tutor', text: 'You have the key — the 50,000 land in the agent’s context window. Finish it: (a) what is special about that window (D1-S4), so what breaks when 50,000 pour in? (b) what should the tool return instead of the full list?' },
+      { who: 'Nick', text: 'Context memory. It has a limited capacity. [b] An interface that can provide information like an API.', wrong: true },
+      { who: 'Tutor', text: '(a) correct — the context window is a finite-capacity memory, so 50,000 rows overflow it, pollute attention, and waste tokens (exactly D1-S4). (b) needs a subtle flip: "provide everything like an API" is the trap. A human API can return everything because the human paginates/filters on their end; an agent cannot scroll, so whatever the tool returns lands directly in the finite window. The fix is to move the filtering INTO the tool and return only high-signal results: list_users() (50,000) becomes search_users(role="admin", active=true) (12). Crystal: a tool is a contract with a limited-context, non-deterministic agent — return only what is needed, high-signal. HW lens: not dumping the whole waveform, but a probe that triggers/filters to the signals of interest.' },
+      { who: 'Tutor', text: 'APPLY: to find a user’s unpaid invoices, get_all_invoices() (10,000) or search_invoices(status="unpaid", since=...)? And, in your own words, the litmus you kept skipping: "… = workflow / … = agent."' },
+      { who: 'Nick', text: 'Workflow = code the path/steps before running. Agent = the model decides the next step from feedback. Because of the context limit, get_all_invoices is out; you must use search_invoices.', correct: true },
+      { who: 'Tutor', text: 'Both correct — litmus reproduced (weak spot improving, keep drilling), and the APPLY nails the D2-S1 core: respect the finite context, so search_X over list_X. Next (S2): an agent picks which tool to call from the name and description alone — so description quality = call accuracy.' }
+    ]
   }
 ];
 

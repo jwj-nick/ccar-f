@@ -4,13 +4,13 @@
 const JOURNAL = {
   updated: '2026-07-19',
   streak: 3,
-  location: 'W1 · D1 first pass complete (S1–S7) → D2 next',
+  location: 'W1 · D1 done · D2 in progress (S1 done)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D2', ses: 'S1', title: 'Tool Design & MCP Integration — overview & plan',
-    problem: 'D1 done. Next domain (18%): how do you design tools an agent can actually use well, and how does MCP connect an agent to external tools and data? First session = align on the overview and the session plan, then the first concept.',
-    hint: 'Carries over from D1: the agent-computer interface (ACI) and "clear, well-documented tool interfaces" were flagged in D1 as belonging here. Bring your 20 years of interface/spec design.'
+    dom: 'D2', ses: 'S2', title: 'Tool design craft — names, descriptions, consolidation',
+    problem: 'An agent chooses which tool to call from its NAME and DESCRIPTION alone — it does not read full docs. So how do you write tool names and descriptions that make the agent call the right one, the right way? When do you consolidate several low-level tools into one, and why is "more tools" usually worse?',
+    hint: 'Builds on S1 (a tool is a contract with a limited-context agent). Description quality = call accuracy. "More tools isn’t better" is the D1 simplicity trap returning. Use your interface/spec-writing instinct.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -91,6 +91,13 @@ const JOURNAL = {
       insight: 'Fresh scenarios targeting only the Round-1 misses. Resolved solo: loop ≠ agent (a generate→validate loop is evaluator-optimizer; a model deciding its own varying next actions is an agent) and dropping to the lowest rung (100k independent title translations = an augmented LLM, one call each). Independent verification came via the HW anchor: a DUT reporting its own "95% confident" pass is not trustworthy — you need an independent scoreboard the DUT cannot touch, i.e., verification outside the agent, on a criterion it cannot edit.',
       analogy: 'Independent verification = an independent scoreboard / golden reference, never the DUT vouching for itself.',
       result: 'Passed — D1 architecture first pass fully complete (S1–S7). Remaining follow-up: producing the English vocabulary unprompted (spaced review). Next: D2 (Tool Design & MCP).'
+    },
+    {
+      date: '2026-07-19', dom: 'D2', ses: 'S1', mode: 'standard',
+      covered: 'why an agent tool is not an API — the finite-context contract (interactive)',
+      insight: 'A tool is a contract with a NON-deterministic, limited-context agent, not an API wrapper. Concretely: a list_users() that returns all 50,000 users is fine for a human API (the human paginates), but an agent cannot scroll — whatever a tool returns lands directly in its finite context window, flooding it and wasting tokens (the same finite-window fact from D1-S4). So the filtering must move INTO the tool: return high-signal, filtered results (search_users(role, active) → 12 rows) instead of a full list. Design the tool around the agent’s constraint, not around the API surface.',
+      analogy: 'Not dumping the whole waveform upstream — designing a probe that triggers and filters down to only the signals of interest.',
+      result: 'APPLY passed: for "find the unpaid invoices," pick search_invoices(status, since), not get_all_invoices() — because of the context limit. Exam so-what: the agent-appropriate tool is the one that respects limited context (search_X over list_X, meaningful IDs, pagination).'
     }
   ]
 };
