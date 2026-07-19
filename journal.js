@@ -2,15 +2,15 @@
  * Full detail (wrong answers, weak items) stays private in the workspace (00_META/sessions, progress.md). App shows the distilled journal only. */
 
 const JOURNAL = {
-  updated: '2026-07-18',
-  streak: 2,
-  location: 'W1 · D1 in progress (S3 done)',
+  updated: '2026-07-19',
+  streak: 3,
+  location: 'W1 · D1 in progress (S4 done)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D1', ses: 'S4', title: 'Multi-agent systems & context isolation',
-    problem: 'You split a research task across a coordinator and several subagents. Why give each subagent its OWN context window instead of one shared thread? What failure does isolation prevent — and what is the cost you pay for it?',
-    hint: 'Think about token budget, cross-task interference/distraction, and how the subagents’ results get merged back by the coordinator.'
+    dom: 'D1', ses: 'S5', title: 'Keeping agents reliable: stop conditions, verification, guardrails',
+    problem: 'An agent runs its own loop deciding the next step. What keeps it from looping forever, going off the rails, or confidently shipping a wrong result? Name the controls — and where a human belongs in the loop.',
+    hint: 'Build on S4’s summary-boundary seam and S3’s feedback loop. Think stop conditions, an independent verification pass, guardrails/scope limits, and human-in-the-loop checkpoints.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -24,10 +24,12 @@ const JOURNAL = {
 
   // Spaced review (interval repetition)
   reviewDue: [
-    { item: 'workflow vs agent criterion (can you predict the path/step count?)', when: 'Jul 14 · Jul 16 · Jul 20' },
-    { item: '5 workflow patterns — recognize by data-flow shape', when: 'Jul 19 · Jul 21 · Jul 25' },
-    { item: 'routing vs orchestrator = can you enumerate the task list up front? + is there a merge?', when: 'Jul 19 · Jul 21 · Jul 25' },
-    { item: 'orchestrator → agent line = feedback loop + self-stop (runtime-dynamic alone is NOT an agent)', when: 'Jul 19 · Jul 21 · Jul 25' }
+    { item: 'workflow vs agent litmus (predict the path/step count?) — stumbled on Jul 19, re-drill', when: 'Jul 20 · Jul 22 · Jul 26' },
+    { item: '5 workflow patterns — recognize by data-flow shape', when: 'Jul 21 · Jul 25' },
+    { item: 'routing vs orchestrator = can you enumerate the task list up front? + is there a merge?', when: 'Jul 21 · Jul 25' },
+    { item: 'orchestrator → agent line = feedback loop + self-stop (runtime-dynamic alone is NOT an agent)', when: 'Jul 21 · Jul 25' },
+    { item: 'multi-agent decision rule = independent+breadth → multi / coupled+sequential → single', when: 'Jul 20 · Jul 22 · Jul 26' },
+    { item: 'summary boundary = information loss / baked-in error → structured returns (evidence+source+confidence) + independent check', when: 'Jul 20 · Jul 22 · Jul 26' }
   ],
 
   // Session timeline (rendered newest-first)
@@ -52,6 +54,13 @@ const JOURNAL = {
       insight: 'Deciding property for routing vs orchestrator is NOT "which one does it pick" (both pick) — it is: can you enumerate the whole task list before any request arrives, AND is there a merge? Enumerable + no merge = routing; built at runtime + aggregated = orchestrator. Orchestrator → agent line: an orchestrator has dynamic CONTENT but a fixed one-pass control flow (decompose → dispatch → merge). It becomes an agent only when a feedback loop appears — the model observes results, decides the next action from them, and decides when to stop.',
       analogy: 'Orchestrator = directed regression dispatched once. Agent = constrained-random + coverage-closure: observe coverage → generate the next stimulus → loop until closure.',
       result: 'Passed the trap APPLY: a per-document field-extraction pipeline that "decides at runtime" is still orchestrator, because there is no feedback loop. "Runtime-dynamic" alone does NOT make it an agent.'
+    },
+    {
+      date: '2026-07-19', dom: 'D1', ses: 'S4', mode: 'standard',
+      covered: 'multi-agent systems & context isolation — why isolate, the cost, and when to reach for it (interactive)',
+      insight: 'A multi-agent system = a coordinator (lead) plus subagents, each a full agent with its own loop and context. Isolate each subagent’s context for two reasons: (1) cross-task interference — one shared thread lets five investigations pollute each other’s attention; (2) capacity — a context window is a fixed buffer, so sharing gives each subagent ~window÷N and overflow triggers costly re-compaction; isolation gives each a FULL window and returns only a summary, so total usable context ≈ N×window while every window stays clean. The cost: duplicated work (a big driver of ~15× token usage) and drift/inconsistency across blind subagents, which the coordinator must reconcile — mitigated by very crisp task specs. Decision rule: subtasks independent + breadth/exploration → multi-agent; coupled/sequential/shared-state (most coding) → single agent. Litmus: can the pieces run without seeing each other’s work?',
+      analogy: 'Isolation = separate lanes with local scratchpads, no shared-bus cross-talk, only summaries written back. The summary boundary is a lossy handoff — like a block returning pass/fail instead of the full waveform: trust it only with evidence, sources, and an independent check (never a self-graded pass).',
+      result: 'APPLY passed: a 20-paper survey fits multi-agent (independent, breadth); an 8-file consistent rename does not (coupled → drift cost outweighs the parallel gain). Bonus: identified the summary-boundary reliability seam (loss of provenance) and its fix (structured returns + independent verification).'
     }
   ]
 };
