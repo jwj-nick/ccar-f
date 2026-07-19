@@ -4,13 +4,13 @@
 const JOURNAL = {
   updated: '2026-07-19',
   streak: 3,
-  location: 'W1 · D1 first pass + mini-mock Round 1 (3/5)',
+  location: 'W1 · D1 first pass complete (S1–S7) → D2 next',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D1', ses: 'S7 R2', title: 'Mini-mock Round 2 — re-drill the 3 weak spots',
-    problem: 'New scenarios that target the three misses from Round 1: (1) a generate↔evaluate loop is a WORKFLOW (evaluator-optimizer), not an agent — a feedback loop alone is not agency; (2) on the complexity ladder, drop to the LOWEST rung (an augmented LLM / single call), not just "single agent"; (3) verification must be INDEPENDENT and tamper-proof — the agent must not be able to edit the test/oracle.',
-    hint: 'Round 1 was 3/5 (Q2 routing/orchestrator ✓, Q3 multi/single ✓). Pass Round 2, then move to a scenario or the next domain.'
+    dom: 'D2', ses: 'S1', title: 'Tool Design & MCP Integration — overview & plan',
+    problem: 'D1 done. Next domain (18%): how do you design tools an agent can actually use well, and how does MCP connect an agent to external tools and data? First session = align on the overview and the session plan, then the first concept.',
+    hint: 'Carries over from D1: the agent-computer interface (ACI) and "clear, well-documented tool interfaces" were flagged in D1 as belonging here. Bring your 20 years of interface/spec design.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -84,6 +84,13 @@ const JOURNAL = {
       insight: 'Five scenario judgments spanning the domain. Solid: telling orchestrator-workers from routing (runtime decomposition + aggregate), and choosing a single agent over multi-agent for a coupled 40-file rename (isolation would cause drift). Three to firm up: a generate↔evaluate loop is the evaluator-optimizer WORKFLOW, not an agent (a feedback loop alone is not agency); on the ladder, drop to the lowest rung — a bounded one-shot summary is an augmented LLM (one call), not a single agent; and verification must be independent and tamper-proof (the agent must not be able to loosen the assertion it is graded on).',
       analogy: 'Model answers written out in plain English so the vocabulary lands, then filed under Lessons + Transcripts.',
       result: 'Round 1 = 3/5 (Q2, Q3 correct; Q1 wrong; Q4, Q5 partial). Round 2 will re-drill the three weak spots with fresh scenarios before D1 is closed.'
+    },
+    {
+      date: '2026-07-19', dom: 'D1', ses: 'S7 R2', mode: 'standard',
+      covered: 'mini-mock Round 2 — re-drill the three weak spots (self-test)',
+      insight: 'Fresh scenarios targeting only the Round-1 misses. Resolved solo: loop ≠ agent (a generate→validate loop is evaluator-optimizer; a model deciding its own varying next actions is an agent) and dropping to the lowest rung (100k independent title translations = an augmented LLM, one call each). Independent verification came via the HW anchor: a DUT reporting its own "95% confident" pass is not trustworthy — you need an independent scoreboard the DUT cannot touch, i.e., verification outside the agent, on a criterion it cannot edit.',
+      analogy: 'Independent verification = an independent scoreboard / golden reference, never the DUT vouching for itself.',
+      result: 'Passed — D1 architecture first pass fully complete (S1–S7). Remaining follow-up: producing the English vocabulary unprompted (spaced review). Next: D2 (Tool Design & MCP).'
     }
   ]
 };

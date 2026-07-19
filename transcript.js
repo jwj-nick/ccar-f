@@ -122,6 +122,23 @@ const TRANSCRIPTS = [
       { who: 'Nick', text: 'single agent is better' },
       { who: 'Tutor', text: 'Right direction, but stop one rung lower: an augmented LLM — a single call, no loop. A single agent is already too high (an agent is a loop; nothing to loop on). The 5-subagent proposal is severe over-engineering. Score: 3/5 — re-drill Q1 (loop ≠ agent), Q5 (lowest rung), Q4 (independent verification) in Round 2.' }
     ]
+  },
+  {
+    id: 't-d1-s7-r2', dom: 'D1', ses: 'S7 R2', date: '2026-07-19', title: 'D1 Mini-Mock Round 2 — re-drill (interactive)',
+    note: 'Fresh scenarios targeting only the three Round-1 misses. Q3 used a hardware-verification anchor to land the vocabulary.',
+    turns: [
+      { who: 'Tutor', text: 'R2-Q1 (loop ≠ agent). Which is evaluator-optimizer (workflow) and which is an agent? A: generate a SQL query → a validator checks it against the schema → revise until valid, same fixed loop. B: given "make this dashboard load faster," the model profiles, decides what to optimize, tries a change, measures, then decides the next thing to try, until it is fast enough.' },
+      { who: 'Nick', text: 'A evaluator-optimizer, B agent.', correct: true },
+      { who: 'Tutor', text: 'Correct. A is a fixed generate↔validate loop (workflow); B is the model choosing its own varying next actions (agent).' },
+      { who: 'Tutor', text: 'R2-Q2 (lowest rung). Translate 100,000 product titles EN→KO, each independent. A teammate proposes a single agent per title. Lowest rung, and why is an agent too high?' },
+      { who: 'Nick', text: 'An augmented LLM is enough.', correct: true },
+      { who: 'Tutor', text: 'Correct — one call per title; there is nothing to loop on, so an agent is over-engineering.' },
+      { who: 'Tutor', text: 'R2-Q3 (independent verification). An agent generates a financial report and writes "confidence: 95%" at the bottom. A teammate says "great, it is confident." What is wrong, and what makes verification trustworthy?' },
+      { who: 'Nick', text: 'Without multiple-choice options I am not sure — the terms do not stick.' },
+      { who: 'Tutor', text: 'No memorization — anchor it to your bench. Would you accept a DUT that reports its own "pass, 95% confident"? If not, what do you demand instead?' },
+      { who: 'Nick', text: 'The verification method, the check items, and a detailed result report (a checklist).' },
+      { who: 'Tutor', text: 'That is the evidence/traceability half — correct (the structured return from S4). The other half: who WROTE that report? If the DUT wrote it, however detailed, it is still grading itself. That is why your bench has an independent scoreboard / golden reference the DUT cannot touch. Vocabulary: a self-report is not proof (an agent can be confidently wrong); trustworthy verification is INDEPENDENT — outside the agent, on a criterion it cannot edit (programmatic reconciliation, a separate evaluator, citations). Anchor: "an independent scoreboard, not the DUT’s word" = "independent verification, not the agent’s self-confidence." All three weak spots cleared → D1 first pass complete.' }
+    ]
   }
 ];
 
