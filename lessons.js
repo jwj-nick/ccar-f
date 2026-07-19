@@ -69,6 +69,26 @@ const LESSONS = [
       { h: 'Human-in-the-loop: two placement principles', p: 'HITL cuts across the axes, so where you put it matters — not everywhere (that destroys the agent’s value). Two principles compose: (1) a MILESTONE gate between big phases — efficient oversight, because one review covers cost + goal + guardrails + re-anchor together; (2) an IRREVERSIBILITY gate — a mandatory human approval right before any action you cannot take back (git push, deploy to prod), which cannot wait for a phase boundary because once it happens it is done. Reversible, low-stakes steps run autonomously.' },
       { h: 'HW lens & why it matters', p: 'This is exactly a verification environment’s control set: a timeout (stop), an independent scoreboard (verify), a test-plan goal you are held to (re-anchor), a compute budget, assertions/bounds (guardrails), and sign-off before tape-out (the irreversible HITL gate). Exam-wise, this is the backbone of "the agent is autonomous — how do you trust it?" questions, and "irreversible / high-stakes actions require human approval" is both a recurring answer and a real safety principle.' }
     ]
+  },
+  {
+    id: 'd1-s6', dom: 'D1', ses: 'S6', date: '2026-07-19', title: 'The Complexity Ladder (D1 capstone)',
+    goal: 'Given a task, choose the lowest rung of the agentic ladder that solves it — and know exactly what a needless climb costs.',
+    blocks: [
+      { h: 'The one principle behind every D1 trap', p: 'S1 warned "more autonomy isn’t always better"; S4 warned "more agents isn’t always better." They share one direction: start with the simplest thing that works, and treat added complexity (autonomy, agent count) as a COST, not a free upgrade. Every step up must be forced by the task. Anthropic’s own guidance: find the simplest solution, and increase complexity only when it demonstrably improves the outcome.' },
+      { h: 'The ladder', list: [
+        'Augmented LLM — one call plus tools / retrieval / memory. The floor.',
+        'Workflow — the 5 pre-authored patterns (chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer).',
+        'Single agent — a feedback loop where the model decides the next step.',
+        'Multi-agent — a coordinator plus subagents with isolated contexts.'
+      ] },
+      { h: 'Power rises — so does cost', p: 'Each rung up adds capability but also latency, tokens, nondeterminism, and new failure modes (the five axes from S5). The rule: pick the LOWEST rung that solves the task; climb only when the current rung genuinely cannot do the job.' },
+      { h: 'The climb triggers (when a step up is justified)', list: [
+        'Augmented LLM → workflow: the task needs multiple steps or branches, but the path is still predictable (you can hardcode the flow).',
+        'Workflow → single agent: you cannot predefine the path — the model must decide the next step from feedback (open-ended, unknown step count).',
+        'Single agent → multi-agent: subtasks are independent and breadth-heavy, and the work exceeds a single context window (the S4 rule).'
+      ] },
+      { h: 'The hidden cost of climbing (worked example)', p: 'Extracting {date, vendor, total} from 10k invoices/day is a bounded, predictable task → the lowest rung (an augmented LLM call, or a simple workflow) is correct. Jumping to a single agent is NOT nearly free: an agent is a loop, so you go from ~1 call per item to N calls (latency and tokens ×N, then ×10,000 at this volume); you lose determinism (the agent picks its own path, so identical invoices can take different routes, killing the reproducibility a bounded extraction needs); and you inherit the S5 control burden (stop conditions, verification, guardrails) for flexibility the task never required. That is precisely "reaching one rung too high."' }
+    ]
   }
 ];
 

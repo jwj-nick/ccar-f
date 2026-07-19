@@ -59,7 +59,7 @@ const LIBRARY = [
 const DOMAINS = [
   {
     id: 'd1', code: 'D1', name: 'Agentic Architecture & Orchestration', ko: 'agent design & orchestration',
-    weight: 27, ts: 7, conf: 3, order: 1,
+    weight: 27, ts: 7, conf: 4, order: 1,
     tagline: 'The agentic loop is the backbone the other domains hang on. The biggest domain.',
     essence: 'Distinguishing structured workflows from autonomous agents, and designing the agentic loop (gather context → act → verify → repeat) and multi-agent orchestration to fit the situation.',
     concepts: [
@@ -80,10 +80,11 @@ const DOMAINS = [
     ],
     judgments: [
       'Is the step count predictable? → workflow (chaining/routing) vs autonomous agent.',
-      'Do subtasks depend on the input? → orchestrator-workers vs fixed parallelization.',
-      'Is a subagent worth adding? (isolation/parallelism gains vs token/coordination cost).',
-      'Verify with what? A linter if rules exist, otherwise LLM-as-judge.',
-      'How do you guarantee stop conditions & transparency?'
+      'Routing vs orchestrator? Can you enumerate the whole task list up front, and is there a merge? Enumerable + no merge = routing; built at runtime + aggregated = orchestrator.',
+      'Orchestrator vs agent? Only a feedback loop (the model decides the next step + when to stop) makes it an agent — "runtime-dynamic" alone does not.',
+      'Which rung of the ladder? augmented LLM → workflow → single agent → multi-agent. Pick the lowest that works; each climb adds real cost (an agent is a loop = N calls/item, nondeterminism, control burden).',
+      'Which reliability control for which failure? terminate → stop condition; correct → INDEPENDENT verification; on-goal → re-anchor the goal in durable state; cost → budget cap; bounds → guardrails.',
+      'Where does the human go? A milestone gate between phases (efficiency) + a mandatory gate right before any irreversible / high-stakes action (safety) — not at every step.'
     ],
     traps: [
       '"Multi-agent is always better" — no. Simplicity first; add complexity only when it earns its keep.',
