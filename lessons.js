@@ -89,6 +89,18 @@ const LESSONS = [
       ] },
       { h: 'The hidden cost of climbing (worked example)', p: 'Extracting {date, vendor, total} from 10k invoices/day is a bounded, predictable task → the lowest rung (an augmented LLM call, or a simple workflow) is correct. Jumping to a single agent is NOT nearly free: an agent is a loop, so you go from ~1 call per item to N calls (latency and tokens ×N, then ×10,000 at this volume); you lose determinism (the agent picks its own path, so identical invoices can take different routes, killing the reproducibility a bounded extraction needs); and you inherit the S5 control burden (stop conditions, verification, guardrails) for flexibility the task never required. That is precisely "reaching one rung too high."' }
     ]
+  },
+  {
+    id: 'd1-s7', dom: 'D1', ses: 'S7 R1', date: '2026-07-19', title: 'D1 Mini-Mock — Round 1 (model answers)',
+    goal: 'Self-test judgment across S1–S6. Five scenarios; each answer is "which and why."',
+    blocks: [
+      { h: 'Q1 — pattern: generate → score → revise → repeat', p: 'Answer: EVALUATOR-OPTIMIZER (a workflow). One model generates, a separate evaluator scores it against fixed criteria, the generator revises on the feedback, looping until it passes. Common trap: calling it an "agent" because it loops. A feedback loop alone is not agency — here the loop, the critic, and the stop condition are all pre-authored, so it is a workflow. An agent would decide its own next action and when to stop.' },
+      { h: 'Q2 — routing vs orchestrator: runtime clause extraction', p: 'Answer: ORCHESTRATOR-WORKERS. The subtask set (which clause-types are present) is decided at runtime from the input, delegated to workers, and aggregated into one summary. Runtime decomposition + aggregation is exactly what separates it from routing, which would pick one fixed path with no merge.' },
+      { h: 'Q3 — multi vs single agent: rename across 40 files', p: 'Answer: SINGLE AGENT. The edits are tightly coupled — every call site must stay consistent (shared, evolving state). Isolated subagents would drift into inconsistent renames. The subtasks are not independent, so the multi-agent parallel gain does not apply and coordination cost would dominate.' },
+      { h: 'Q4 — reliability: agent loosens the assertion, declares done', p: 'Answer: the CORRECTNESS axis — a work-around (patching the symptom instead of the root cause) plus a confidently-wrong "done." The agent is gaming its own success check. Control: INDEPENDENT, tamper-proof verification — (1) the stop condition\'s "done" must be a verifiable criterion the agent cannot weaken, and (2) a guardrail must forbid the agent from editing the tests/oracle.' },
+      { h: 'Q5 — ladder: summarize one 20-page PDF into 5 bullets', p: 'Answer: an AUGMENTED LLM — one model call, no loop. A single agent is already too high (an agent is a loop, and there is nothing to loop on). A 5-subagent proposal is severe over-engineering (5× cost + merge/coordination, zero benefit). Rule: the lowest rung that works — here, one call.' },
+      { h: 'Three things to firm up', p: '(1) A feedback loop does not by itself make an agent — a fixed generate↔evaluate loop is the evaluator-optimizer workflow. (2) On the ladder, drop to the LOWEST rung: a bounded one-shot task is an augmented LLM, not a single agent. (3) Verification must be independent and tamper-proof — never let the agent grade itself on a criterion it can edit.' }
+    ]
   }
 ];
 

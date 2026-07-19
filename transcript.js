@@ -101,6 +101,27 @@ const TRANSCRIPTS = [
       { who: 'Nick', text: 'An augmented LLM is plenty to extract JSON from the invoice PDF. A workflow would also do the job efficiently. A single agent would add almost no cost, I think. Multi-agent could have serious side effects: 10k similar, simple jobs each handled by its own agent means wasted duplicate common work, plus conflicts when merging into one file and extra effort to avoid them.' },
       { who: 'Tutor', text: 'Lowest = augmented LLM (correct), workflow also fine, and your multi-agent analysis (duplicate common work + merge conflicts + coordination overhead) reuses S4 exactly. One correction — the crux of today: "a single agent adds almost no cost" is wrong. An augmented LLM is ~1 call per item; a single agent is a LOOP (decide → act → observe → repeat) = N calls per item. So latency/tokens multiply by N — and at 10k/day that N is multiplied again by 10,000; a "small" per-item overhead is amplified by volume. Also nondeterminism: the agent picks its own path, so identical invoices can take different routes, losing the reproducibility a bounded extraction wants. And you inherit the S5 control burden (stop/verify/guardrails) for flexibility the task never needed. So augmented LLM → agent is not free — it is exactly "reaching one rung too high" (workflow is still predictable and cheap, so it is fine). Capstone climb triggers: augmented → workflow (multi-step but path predictable) / workflow → single agent (path not predefinable, model decides next step from feedback) / single → multi (independent + breadth, exceeds one window). One line: start at the lowest rung, know each climb’s cost, climb only when the task forces it. That closes D1’s first pass (S1–S6).' }
     ]
+  },
+  {
+    id: 't-d1-s7', dom: 'D1', ses: 'S7 R1', date: '2026-07-19', title: 'D1 Mini-Mock Round 1 (interactive)',
+    note: 'Self-test across S1–S6. Each turn: the question, Nick’s answer, and the model answer.',
+    turns: [
+      { who: 'Tutor', text: 'Q1. A system drafts a product description, a separate model scores it against a style rubric, it revises on that feedback, and repeats until the score passes. Which of the 5 workflow patterns?' },
+      { who: 'Nick', text: 'agent', wrong: true },
+      { who: 'Tutor', text: 'Evaluator-optimizer (a workflow). Generator + a separate evaluator scoring against fixed criteria + revise-on-feedback loop, until it passes. Not an agent: the loop, critic, and stop are pre-authored. A feedback loop alone is not agency.' },
+      { who: 'Tutor', text: 'Q2. A contract assistant reads each contract and, based on what it finds, decides at runtime which clause-types are present, spins a worker per clause-type, and assembles one summary. Routing or orchestrator?' },
+      { who: 'Nick', text: 'orchestrator workers, distribution and summary', correct: true },
+      { who: 'Tutor', text: 'Correct — orchestrator-workers. Subtask set decided at runtime, delegated, aggregated. Runtime decomposition + merge is what separates it from routing.' },
+      { who: 'Tutor', text: 'Q3. Rename one API symbol across 40 files, keeping every call site consistent. Multi-agent or single?' },
+      { who: 'Nick', text: 'single, to keep consistency easily', correct: true },
+      { who: 'Tutor', text: 'Correct — single agent. The edits are coupled (shared, evolving state); isolated subagents would drift. Not independent → no multi-agent gain, coordination cost dominates.' },
+      { who: 'Tutor', text: 'Q4. An agent keeps making a failing test pass by loosening the assertion instead of fixing the bug, then declares "done." Which failure axis, and which control?' },
+      { who: 'Nick', text: 'Accurate test/verification criteria matter — you need clear conditions and a checklist.' },
+      { who: 'Tutor', text: 'Right instinct — here is the vocabulary. Correctness axis: a work-around + a confidently-wrong "done"; the agent is gaming its own success check. Control = INDEPENDENT, tamper-proof verification: "done" must be a criterion the agent cannot weaken, plus a guardrail forbidding it from editing the tests/oracle.' },
+      { who: 'Tutor', text: 'Q5. Summarize a single 20-page PDF into 5 bullets. A teammate proposes a multi-agent system with 5 subagents. Right rung? What is wrong?' },
+      { who: 'Nick', text: 'single agent is better' },
+      { who: 'Tutor', text: 'Right direction, but stop one rung lower: an augmented LLM — a single call, no loop. A single agent is already too high (an agent is a loop; nothing to loop on). The 5-subagent proposal is severe over-engineering. Score: 3/5 — re-drill Q1 (loop ≠ agent), Q5 (lowest rung), Q4 (independent verification) in Round 2.' }
+    ]
   }
 ];
 

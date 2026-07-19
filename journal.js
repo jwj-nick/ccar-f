@@ -4,13 +4,13 @@
 const JOURNAL = {
   updated: '2026-07-19',
   streak: 3,
-  location: 'W1 · D1 first pass complete (S1–S6)',
+  location: 'W1 · D1 first pass + mini-mock Round 1 (3/5)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D1', ses: 'S7', title: 'Mini-mock — self-test across D1 (S1–S6)',
-    problem: 'Judgment drills across the whole domain: name the pattern from a flow, tell routing from orchestrator, decide workflow vs agent, pick the reliability control for a failure, and choose the right rung of the complexity ladder — with the reason each time.',
-    hint: 'This closes the D1 first pass. Every answer is a JUDGMENT ("which and why"), not recall. Weak spots get re-drilled before moving to the next domain.'
+    dom: 'D1', ses: 'S7 R2', title: 'Mini-mock Round 2 — re-drill the 3 weak spots',
+    problem: 'New scenarios that target the three misses from Round 1: (1) a generate↔evaluate loop is a WORKFLOW (evaluator-optimizer), not an agent — a feedback loop alone is not agency; (2) on the complexity ladder, drop to the LOWEST rung (an augmented LLM / single call), not just "single agent"; (3) verification must be INDEPENDENT and tamper-proof — the agent must not be able to edit the test/oracle.',
+    hint: 'Round 1 was 3/5 (Q2 routing/orchestrator ✓, Q3 multi/single ✓). Pass Round 2, then move to a scenario or the next domain.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -77,6 +77,13 @@ const JOURNAL = {
       insight: 'S1–S5 collapse into one discipline: augmented LLM → workflow → single agent → multi-agent is a ladder where power rises AND so do cost and failure surface. Pick the LOWEST rung that solves the task; climb only when the current rung genuinely cannot. The climb triggers: augmented → workflow when you need multiple steps/branches but the path is still predictable; workflow → single agent when you cannot predefine the path and the model must decide the next step from feedback; single → multi-agent when subtasks are independent + breadth and exceed one context window. Over-engineering has a real, often invisible cost.',
       analogy: 'The two traps unify: "more autonomy isn’t better" (S1) and "more agents isn’t better" (S4) are both "don’t reach a rung higher than the task forces." Anthropic’s own guidance: find the simplest solution, add complexity only when it demonstrably helps.',
       result: 'APPLY on a 10k/day invoice-extraction task: lowest rung = augmented LLM (correct). Key correction: jumping to a single AGENT is NOT nearly free — an agent is a loop (N calls per item, so latency/tokens ×N, then ×10,000 at volume), it becomes nondeterministic (loses the reproducibility a bounded extraction needs), and it drags in the S5 control burden. That is exactly "reaching one rung too high." D1 architecture first pass (S1–S6) complete.'
+    },
+    {
+      date: '2026-07-19', dom: 'D1', ses: 'S7 R1', mode: 'standard',
+      covered: 'D1 mini-mock, Round 1 — judgment drills across S1–S6 (self-test)',
+      insight: 'Five scenario judgments spanning the domain. Solid: telling orchestrator-workers from routing (runtime decomposition + aggregate), and choosing a single agent over multi-agent for a coupled 40-file rename (isolation would cause drift). Three to firm up: a generate↔evaluate loop is the evaluator-optimizer WORKFLOW, not an agent (a feedback loop alone is not agency); on the ladder, drop to the lowest rung — a bounded one-shot summary is an augmented LLM (one call), not a single agent; and verification must be independent and tamper-proof (the agent must not be able to loosen the assertion it is graded on).',
+      analogy: 'Model answers written out in plain English so the vocabulary lands, then filed under Lessons + Transcripts.',
+      result: 'Round 1 = 3/5 (Q2, Q3 correct; Q1 wrong; Q4, Q5 partial). Round 2 will re-drill the three weak spots with fresh scenarios before D1 is closed.'
     }
   ]
 };
