@@ -4,13 +4,13 @@
 const JOURNAL = {
   updated: '2026-07-20',
   streak: 4,
-  location: 'W1→W2 · D2 in progress (S1–S3 done)',
+  location: 'W1→W2 · D2 in progress (S1–S4 done)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D2', ses: 'S4', title: 'MCP architecture — host, client, server, primitives',
-    problem: 'How does MCP let an agent connect to external tools and data in a standard way? Learn the host / client / server roles, the three primitives (tools, resources, prompts), and what MCP actually standardizes — so you are not writing a bespoke integration for every service.',
-    hint: 'New concept block. Anchor: MCP is like a standard bus/protocol so any "device" (server) plugs into any "host" without custom wiring. Bring your protocol/interface background.'
+    dom: 'D2', ses: 'S5', title: 'MCP transport & security — stdio vs SSE/HTTP, prompt injection',
+    problem: 'When do you use stdio vs SSE/HTTP transport for an MCP server? And since tools are the risk surface, what are the security concerns — trust boundaries, permissions, and prompt injection — when an agent connects to external servers?',
+    hint: 'Extends "tools are where side effects live." A remote, multi-user server has different trust and transport needs than a local process. Bring your interface/security instinct.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -112,6 +112,13 @@ const JOURNAL = {
       insight: 'A tool return is feedback in the agent’s loop (act → verify → repeat). A structured error — what went wrong + how to fix it + a cheap recovery path (e.g., "call list_tests()") — lets the agent self-recover: it fixes its call and continues. An opaque code like {error:"500"} is broken feedback: it demands outside knowledge the agent does not have, so the agent either retries blindly (wasting tokens / looping) or gives up and escalates. Design principle: make recoverable errors actionable so the agent fixes itself; escalate cleanly only when it is truly unrecoverable (which ties back to stop conditions and human-in-the-loop).',
       analogy: 'Opaque 500 = a bare exit code with no waveform. A structured error = an assertion failure with file, line, expected-vs-actual, and a hint — the engineer (agent) can act on it.',
       result: 'Nick nailed it: with the opaque code the agent can only report "error" upward and leave the loop; the structured message lets it self-correct. Also built a Glossary + recall-quiz into the app (his request) to keep drilling the English vocabulary.'
+    },
+    {
+      date: '2026-07-20', dom: 'D2', ses: 'S4', mode: 'standard',
+      covered: 'MCP architecture — why it exists, host/client/server, the three primitives (interactive)',
+      insight: 'Without a standard, M agents × N services means M×N bespoke integrations; MCP is the standard that turns this into M+N — write a server once and any MCP host can use it (Anthropic calls it "a USB-C port for AI"). Roles: the host is the agent app the user runs; a server is a lightweight program exposing ONE capability; a client is the connector inside the host holding a 1:1 connection to a server (the wiring, not the agent). The three primitives a server exposes are distinguished by WHO controls them: tools = model-controlled actions (the risk surface — where guardrails/HITL apply), resources = app-controlled data read into context (like GET, read-only), prompts = user-controlled templates.',
+      analogy: 'MCP = a standard bus (USB/PCIe): a device implements the standard once and plugs into any compliant host — no custom glue per pair.',
+      result: 'Classified tools/resources/prompts correctly, but hit the key trap: "read-only, so it is a resource" is wrong — the test is control, not side-effects. A model-invoked parameterized DB query is a TOOL even though it only reads. Also: with-MCP integrations = M+N (not just the server count). MCP terms added to the Glossary.'
     }
   ]
 };

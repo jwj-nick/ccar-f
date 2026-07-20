@@ -134,6 +134,17 @@ const LESSONS = [
       { h: 'Recoverable vs not', p: 'Design principle: make recoverable errors actionable so the agent self-corrects; escalate cleanly only when the situation is truly unrecoverable — which ties back to stop conditions and human-in-the-loop from D1.' },
       { h: 'HW lens', p: 'An opaque 500 is a bare exit code with no waveform. A structured error is an assertion failure with file, line, expected-vs-actual, and a hint — the engineer (agent) can actually act on it.' }
     ]
+  },
+  {
+    id: 'd2-s4', dom: 'D2', ses: 'S4', date: '2026-07-20', title: 'MCP Architecture',
+    goal: 'Understand why MCP exists, its host/client/server roles, and the three primitives.',
+    blocks: [
+      { h: 'Why MCP exists — M×N → M+N', p: 'Without a standard, M agents each needing N services means M×N bespoke integrations, which explodes as either side grows. MCP is a standard protocol, so each agent speaks it once and each service exposes it once → M+N. Anthropic calls MCP "a USB-C port for AI applications": implement the standard once and things interoperate.' },
+      { h: 'The three roles', p: 'Host = the agent application the user runs (Claude Code, Claude Desktop, an IDE); the model lives here and consumes capabilities. Server = a lightweight program that exposes ONE capability via the standard (a GitHub server, a filesystem server, a DB server). Client = the connector inside the host that holds a 1:1 connection to one server — it is the wiring, not the agent. One host runs many clients, one per connected server.' },
+      { h: 'The three primitives — decided by WHO controls', p: 'A server exposes three kinds of things: Tools = actions the MODEL calls (may have side effects) — model-controlled; this is the risk surface where guardrails and HITL belong. Resources = data read into context (files, docs, records) — app-controlled, read-only, like a GET. Prompts = reusable templates/workflows the USER invokes (e.g., a /code-review command) — user-controlled. Mnemonic: model→tool, app→resource, user→prompt.' },
+      { h: 'The classic trap: read-only ≠ resource', p: 'Both tools and resources can "get data," so people classify by side-effects — wrongly. The test is CONTROL, not read-only-ness. A DB query the model actively issues with parameters (search_orders(customer_id)) is a TOOL even though it only reads, because the model initiates it. A resource is passive data the app loads into context (often URI-addressed).' },
+      { h: 'HW lens', p: 'MCP is a standard bus like USB or PCIe: a device implements the standard once and plugs into any compliant host, with no custom glue per pair. Tools are the actuators (side effects); resources are read ports.' }
+    ]
   }
 ];
 

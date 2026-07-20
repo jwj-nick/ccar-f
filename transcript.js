@@ -175,6 +175,21 @@ const TRANSCRIPTS = [
       { who: 'Nick', text: 'B is good. With A’s message, unless there is a registered reference/index error manual it is useless — the agent would just say "error" to the upper orchestrator or the user and leave the loop.', correct: true },
       { who: 'Tutor', text: 'Correct and sharp — an opaque code demands outside knowledge the agent lacks, so it cannot self-recover and must escalate or give up. Crystal: an error is feedback (act → verify → repeat). A structured, actionable error — what went wrong + how to fix + a cheap recovery path — lets the agent fix its call and continue; an opaque code causes blind retries or escalation. Your nuance is a design principle: make recoverable errors actionable so the agent self-corrects, and escalate cleanly only when it is truly unrecoverable (which ties back to stop conditions and HITL). HW lens: 500 = a bare exit code; a structured error = an assertion with file/line/expected-vs-actual + a hint.' }
     ]
+  },
+  {
+    id: 't-d2-s4', dom: 'D2', ses: 'S4', date: '2026-07-20', title: 'MCP Architecture (interactive)',
+    note: 'English translation of the original Korean session.',
+    turns: [
+      { who: 'Tutor', text: 'Before memorizing MCP, why does it exist? Agent A talks to GitHub, Slack, Drive, DB; B and C too; each service has a different API/auth. Without a standard, how many integrations, and why is that a problem as it grows? And in hardware, how was the same "many devices ↔ many hosts" problem solved?' },
+      { who: 'Nick', text: 'Each agent needs an integration for as many tools/services as it uses. A standardized interface is needed.', correct: true },
+      { who: 'Tutor', text: 'Correct — M×N explosion → with a standard it becomes M+N. HW anchor: USB/PCIe — a device implements the standard once and plugs into any host. Anthropic calls MCP "a USB-C port for AI." Roles: host = the agent app (wants capabilities), server = exposes one capability, client = a 1:1 connection inside the host. Map it: Claude Code connects to a GitHub MCP server to create an issue — host / server / client?' },
+      { who: 'Nick', text: 'Host = Claude Code, server = GitHub, client = the agent in Claude Code.' },
+      { who: 'Tutor', text: 'Host and server correct. Refine client: it is not the agent — it is the connector inside the host holding the 1:1 link to that server (one client per server). The agent consumes what the client exposes; agent = consumer, client = wiring. Three primitives a server exposes: tool (a model-called action, side effects, model-controlled), resource (data read into context, no side effects, app-controlled), prompt (a user-invoked template, user-controlled). Classify: (1) read README into context, (2) create an issue, (3) a /summarize template.' },
+      { who: 'Nick', text: '1 resource, 2 tool, 3 prompt.', correct: true },
+      { who: 'Tutor', text: '3/3. Deeper: the discriminator is WHO controls it (model→tool, app→resource, user→prompt); REST analogy (resource≈GET, tool≈POST); tools are the risk surface where guardrails/HITL live. Practice: (1) fetch a Confluence page, (2) post to Slack, (3) a /triage-bug workflow, (4) delete a file (+ which D1 control?), (5) query the DB for a customer’s orders — tool or resource and why, (6) 4 agents × 6 services integrations without vs with MCP, and clients if an IDE connects to Postgres and GitHub.' },
+      { who: 'Nick', text: '1 resource, 2 tool, 3 prompt, 4 tool + guardrail, 5 resource (read-only), 6: 24, 6, 2.', wrong: true },
+      { who: 'Tutor', text: '1–4 correct (4: also HITL, since delete is irreversible). 5 is the trap: "read-only, so resource" is wrong — the test is control, not side-effects. A model-invoked parameterized query (search_orders(customer_id)) is a TOOL even though it only reads; a resource is passive data the app loads (URI-addressed). 6: without MCP = 24 (correct); WITH MCP = M+N = 10 (6 counts only the servers — the 4 hosts also adopt MCP once); clients = 2 (correct). Take-away: classify primitives by control, not by whether it writes.' }
+    ]
   }
 ];
 

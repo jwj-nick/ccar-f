@@ -31,7 +31,16 @@ const GLOSSARY = [
   { term: 'High-signal response', dom: 'D2', group: 'Tools & MCP', def: 'A tool return that gives only the relevant, filtered info (search_X, meaningful IDs, pagination) — not a full dump that floods the context.' },
   { term: 'Tool description quality', dom: 'D2', group: 'Tools & MCP', def: 'The name + description ARE the interface the agent reasons over. A good one says: when to use it + what each parameter means + what it returns. Description quality = call accuracy.' },
   { term: 'Tool consolidation', dom: 'D2', group: 'Tools & MCP', def: 'Fold several low-level operations into one high-level tool (schedule_meeting = find availability + book + invite). Fewer, high-impact tools; more is not better.', anchor: 'one high-level transaction vs many register pokes' },
-  { term: 'Structured error', dom: 'D2', group: 'Tools & MCP', def: 'An error that states what went wrong + how to fix it + a cheap recovery path — so the agent self-recovers, instead of an opaque code.', anchor: 'assert with file/line/expected vs actual' }
+  { term: 'Structured error', dom: 'D2', group: 'Tools & MCP', def: 'An error that states what went wrong + how to fix it + a cheap recovery path — so the agent self-recovers, instead of an opaque code.', anchor: 'assert with file/line/expected vs actual' },
+
+  // F. MCP
+  { term: 'MCP', dom: 'D2', group: 'MCP', def: 'A standard protocol that connects agents to external tools and data — turning M×N bespoke integrations into M+N. Write a server once; any MCP host can use it.', anchor: 'USB-C / standard bus for AI' },
+  { term: 'Host (MCP)', dom: 'D2', group: 'MCP', def: 'The agent application the user runs (Claude Code, Claude Desktop, an IDE). It wants to use capabilities; the model lives here and consumes what clients expose.' },
+  { term: 'Client (MCP)', dom: 'D2', group: 'MCP', def: 'The connector inside the host that maintains a 1:1 connection to one server. It is the wiring, NOT the agent — one client per connected server.' },
+  { term: 'Server (MCP)', dom: 'D2', group: 'MCP', def: 'A lightweight program that exposes ONE capability via the standard (a GitHub server, a filesystem server, a DB server).' },
+  { term: 'Resource (MCP primitive)', dom: 'D2', group: 'MCP', def: 'Passive data the host reads into context (files, docs, records) — read-only, app-controlled. Like a GET. NOT decided by read-only-ness but by control: the app loads it.' },
+  { term: 'Prompt (MCP primitive)', dom: 'D2', group: 'MCP', def: 'A reusable template / workflow the USER invokes (e.g., a /code-review command) — user-controlled.' },
+  { term: 'Primitive control test', dom: 'D2', group: 'MCP', def: 'Which of tool/resource/prompt? Ask who controls it: model → tool (an action), app → resource (data to read), user → prompt (a template). Read-only vs not is NOT the test.' }
 ];
 
 window.CCARF_GLOSSARY = GLOSSARY;
