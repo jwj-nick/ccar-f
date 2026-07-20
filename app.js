@@ -4,6 +4,7 @@
   var J = window.CCARF_JOURNAL;
   var L = window.CCARF_LESSONS;
   var T = window.CCARF_TRANSCRIPTS;
+  var G = window.CCARF_GLOSSARY;
   var view = document.getElementById('view');
   var tabsEl = document.getElementById('tabs');
   var fmeta = document.getElementById('fmeta');
@@ -28,7 +29,7 @@
   });
 
   /* ---------- tabs ---------- */
-  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }, { h: '#/transcripts', t: 'Transcripts' }]
+  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }, { h: '#/transcripts', t: 'Transcripts' }, { h: '#/glossary', t: 'Glossary' }]
     .concat(C.DOMAINS.map(function (d) { return { h: '#/' + d.id, t: d.code }; }))
     .concat([{ h: '#/resources', t: 'Resources' }]);
   function renderTabs(active) {
@@ -254,6 +255,23 @@
     return h;
   }
 
+  function glossary() {
+    if (!G || !G.length) return '<section><h1>Glossary</h1><p class="lede">No terms yet.</p></section>';
+    var groups = {}, order = [];
+    G.forEach(function (t) { if (!groups[t.group]) { groups[t.group] = []; order.push(t.group); } groups[t.group].push(t); });
+    var h = '<section><span class="eyebrow">Key Terms · Recall Drill</span><h1>Glossary</h1>'
+      + '<p class="lede">Every term we\'ve covered, with a plain-English definition. Each card shows the <b>definition</b> — recall the <b>term</b> yourself, then tap to reveal. ' + G.length + ' terms · grows every session.</p></section>';
+    h += '<section><div class="sec-head"><span class="eyebrow">Index</span><h2>All terms</h2><p class="sub">Quick browse. The recall cards are below.</p></div>'
+      + '<div class="duechips">' + G.map(function (t) { return '<span class="duechip">' + esc(t.term) + ' <b>' + esc(t.dom) + '</b></span>'; }).join('') + '</div></section>';
+    order.forEach(function (g) {
+      h += '<section class="block"><h2>' + esc(g) + '</h2>' + groups[g].map(function (t) {
+        return '<details class="q"><summary>' + esc(t.def) + '</summary><div class="ans"><b>' + esc(t.term) + '</b> · ' + esc(t.dom)
+          + (t.anchor ? ' &nbsp;<span class="m">🔧 ' + esc(t.anchor) + '</span>' : '') + '</div></details>';
+      }).join('') + '</section>';
+    });
+    return h;
+  }
+
   /* ---------- router ---------- */
   function route() {
     var hash = location.hash || '#/overview';
@@ -264,6 +282,7 @@
     else if (key === 'journal') { html = journal(); active = '#/journal'; }
     else if (key === 'lessons') { html = lessons(); active = '#/lessons'; }
     else if (key === 'transcripts') { html = transcripts(); active = '#/transcripts'; }
+    else if (key === 'glossary') { html = glossary(); active = '#/glossary'; }
     else if (key === 'resources') { html = resources(); active = '#/resources'; }
     else { html = overview(); active = '#/overview'; }
     view.innerHTML = html;

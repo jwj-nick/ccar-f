@@ -2,15 +2,15 @@
  * Full detail (wrong answers, weak items) stays private in the workspace (00_META/sessions, progress.md). App shows the distilled journal only. */
 
 const JOURNAL = {
-  updated: '2026-07-19',
-  streak: 3,
-  location: 'W1 · D1 done · D2 in progress (S1 done)',
+  updated: '2026-07-20',
+  streak: 4,
+  location: 'W1→W2 · D2 in progress (S1–S3 done)',
 
   // Next problem (shown large at the top of the app)
   next: {
-    dom: 'D2', ses: 'S2', title: 'Tool design craft — names, descriptions, consolidation',
-    problem: 'An agent chooses which tool to call from its NAME and DESCRIPTION alone — it does not read full docs. So how do you write tool names and descriptions that make the agent call the right one, the right way? When do you consolidate several low-level tools into one, and why is "more tools" usually worse?',
-    hint: 'Builds on S1 (a tool is a contract with a limited-context agent). Description quality = call accuracy. "More tools isn’t better" is the D1 simplicity trap returning. Use your interface/spec-writing instinct.'
+    dom: 'D2', ses: 'S4', title: 'MCP architecture — host, client, server, primitives',
+    problem: 'How does MCP let an agent connect to external tools and data in a standard way? Learn the host / client / server roles, the three primitives (tools, resources, prompts), and what MCP actually standardizes — so you are not writing a bespoke integration for every service.',
+    hint: 'New concept block. Anchor: MCP is like a standard bus/protocol so any "device" (server) plugs into any "host" without custom wiring. Bring your protocol/interface background.'
   },
 
   // Domain progress (studied confidence 0–5)
@@ -98,6 +98,20 @@ const JOURNAL = {
       insight: 'A tool is a contract with a NON-deterministic, limited-context agent, not an API wrapper. Concretely: a list_users() that returns all 50,000 users is fine for a human API (the human paginates), but an agent cannot scroll — whatever a tool returns lands directly in its finite context window, flooding it and wasting tokens (the same finite-window fact from D1-S4). So the filtering must move INTO the tool: return high-signal, filtered results (search_users(role, active) → 12 rows) instead of a full list. Design the tool around the agent’s constraint, not around the API surface.',
       analogy: 'Not dumping the whole waveform upstream — designing a probe that triggers and filters down to only the signals of interest.',
       result: 'APPLY passed: for "find the unpaid invoices," pick search_invoices(status, since), not get_all_invoices() — because of the context limit. Exam so-what: the agent-appropriate tool is the one that respects limited context (search_X over list_X, meaningful IDs, pagination).'
+    },
+    {
+      date: '2026-07-20', dom: 'D2', ses: 'S2', mode: 'standard',
+      covered: 'tool design craft — names, descriptions, and tool count (interactive)',
+      insight: 'An agent picks which tool to call from its NAME and DESCRIPTION alone — it does not read docs. So the description IS the interface it reasons over. A good tool description says three things: when to use it (purpose), what each parameter means (unambiguous — user_id, not user), and what it returns. Make implicit context explicit ("describe it to a new hire") and namespace by service (asana_search). Small description tweaks yield big call-accuracy gains: description quality = call accuracy. And tools are like agents and autonomy — more is not better: too many, especially overlapping, tools derail tool selection. Fix by consolidating low-level ops into high-level tools (schedule_meeting = find availability + book + invite) and scoping the toolset to the situation.',
+      analogy: 'A vague register spec → the reader mis-uses the register; a precise one → correct use. Consolidation = one high-level configure_and_start(mode) transaction instead of five low-level register pokes.',
+      result: 'APPLY: turned run(q) "Runs a query" into a well-named, namespaced tool with a clear parameter (added: it must also state what it returns). Recognized "more tools isn’t better" as the D1 simplicity trap’s third appearance (autonomy → agent count → tool count).'
+    },
+    {
+      date: '2026-07-20', dom: 'D2', ses: 'S3', mode: 'standard',
+      covered: 'tool responses and structured errors for self-recovery (interactive)',
+      insight: 'A tool return is feedback in the agent’s loop (act → verify → repeat). A structured error — what went wrong + how to fix it + a cheap recovery path (e.g., "call list_tests()") — lets the agent self-recover: it fixes its call and continues. An opaque code like {error:"500"} is broken feedback: it demands outside knowledge the agent does not have, so the agent either retries blindly (wasting tokens / looping) or gives up and escalates. Design principle: make recoverable errors actionable so the agent fixes itself; escalate cleanly only when it is truly unrecoverable (which ties back to stop conditions and human-in-the-loop).',
+      analogy: 'Opaque 500 = a bare exit code with no waveform. A structured error = an assertion failure with file, line, expected-vs-actual, and a hint — the engineer (agent) can act on it.',
+      result: 'Nick nailed it: with the opaque code the agent can only report "error" upward and leave the loop; the structured message lets it self-correct. Also built a Glossary + recall-quiz into the app (his request) to keep drilling the English vocabulary.'
     }
   ]
 };

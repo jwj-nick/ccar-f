@@ -113,6 +113,27 @@ const LESSONS = [
       { h: 'HW lens', p: 'You would not dump a 50,000-line waveform to the block above — you design a probe that triggers and filters down to only the signals of interest. A tool for an agent is that probe.' },
       { h: 'Next (S2)', p: 'The other face of "limited context": an agent decides WHICH tool to call from its name and description alone — it does not read full docs. So description quality = call accuracy, which is the S2 topic.' }
     ]
+  },
+  {
+    id: 'd2-s2', dom: 'D2', ses: 'S2', date: '2026-07-20', title: 'Tool Design Craft — Descriptions & Tool Count',
+    goal: 'Write tool names/descriptions an agent calls correctly, and know why fewer tools is usually better.',
+    blocks: [
+      { h: 'The description IS the interface', p: 'An agent chooses which tool to call from its NAME and DESCRIPTION alone — it does not read your docs. So the name+description is the entire spec it reasons over. Compare get_data(id) "Gets data" (the agent cannot tell what id is or when to use it) with search_transactions(account_id, start_date, end_date) "Search a customer’s transactions in a date range; returns up to 50 recent matches with amount, date, merchant." The second is self-describing, so the agent calls it correctly.' },
+      { h: 'A good tool description says three things', p: '(1) WHEN to use it — the purpose/trigger. (2) WHAT each parameter means — unambiguous names (user_id, not user), with type and constraints. (3) WHAT it returns — because the agent plans its next step from the return (and the return should be high-signal, per S1). Also: make implicit context explicit ("describe it to a new hire who has never seen your system"), and namespace by service (asana_search, github_create_issue). Small description tweaks yield big accuracy gains — description quality = call accuracy.' },
+      { h: 'More tools is not better', p: 'Too many tools — especially overlapping ones — derail the agent’s tool selection: it wastes context reasoning about which to call, or picks the wrong one. This is the D1 simplicity trap for the third time (more autonomy → more agents → more tools). Fix with (1) consolidation: fold several low-level operations into one high-level tool that matches how the work is actually done (schedule_meeting = find availability + book + send invite), moving the chaining logic into the tool; and (2) scoping the toolset to the situation so only relevant tools are exposed.' },
+      { h: 'HW lens', p: 'A vague register spec (unclear field semantics, when to write, constraints) makes the reader mis-use it; a precise spec yields correct use. Consolidation = giving the caller one high-level configure_and_start(mode) transaction instead of exposing five low-level register pokes.' }
+    ]
+  },
+  {
+    id: 'd2-s3', dom: 'D2', ses: 'S3', date: '2026-07-20', title: 'Responses & Structured Errors',
+    goal: 'Design tool returns — successes and errors — so an agent can act on them and self-recover.',
+    blocks: [
+      { h: 'Responses (recap from S1–S2)', p: 'A tool return should be high-signal and token-efficient: filtered results (search_X over list_X), meaningful identifiers over raw uuids, pagination, and a stated return shape — never a full dump that floods the finite context window.' },
+      { h: 'An error is feedback in the loop', p: 'An agent runs act → verify → repeat, so a tool error is feedback it must act on. Two error responses to the same bad call: {error:"500"} versus {error:"No test found with id ‘tc_9987’. Valid ids look like ‘test_<name>’. Call list_tests() to see what is available."}' },
+      { h: 'Structured errors enable self-recovery', p: 'The opaque "500" demands outside knowledge the agent does not have, so the best it can do is retry blindly (wasting tokens / looping) or report "error" upward and leave the loop. The structured message says what went wrong, how to fix it, and points to a cheap recovery path — so the agent fixes its call and continues. A good error = what went wrong + how to fix + the cheap next step.' },
+      { h: 'Recoverable vs not', p: 'Design principle: make recoverable errors actionable so the agent self-corrects; escalate cleanly only when the situation is truly unrecoverable — which ties back to stop conditions and human-in-the-loop from D1.' },
+      { h: 'HW lens', p: 'An opaque 500 is a bare exit code with no waveform. A structured error is an assertion failure with file, line, expected-vs-actual, and a hint — the engineer (agent) can actually act on it.' }
+    ]
   }
 ];
 

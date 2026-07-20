@@ -153,6 +153,28 @@ const TRANSCRIPTS = [
       { who: 'Nick', text: 'Workflow = code the path/steps before running. Agent = the model decides the next step from feedback. Because of the context limit, get_all_invoices is out; you must use search_invoices.', correct: true },
       { who: 'Tutor', text: 'Both correct — litmus reproduced (weak spot improving, keep drilling), and the APPLY nails the D2-S1 core: respect the finite context, so search_X over list_X. Next (S2): an agent picks which tool to call from the name and description alone — so description quality = call accuracy.' }
     ]
+  },
+  {
+    id: 't-d2-s2', dom: 'D2', ses: 'S2', date: '2026-07-20', title: 'Tool Design Craft (interactive)',
+    note: 'English translation of the original Korean session.',
+    turns: [
+      { who: 'Tutor', text: 'An agent picks a tool from its NAME and DESCRIPTION alone — it does not read docs. Two tools: A = get_data(id) "Gets data." B = search_transactions(account_id, start_date, end_date) "Search a customer’s transactions in a date range; returns up to 50 recent matches with amount, date, merchant." Which will the agent call correctly and reliably, and why does A fail? (Use your register-spec instinct.)' },
+      { who: 'Nick', text: 'B is stable. For A you cannot know what id and data are, and it is very hard to know when to call that function/tool.', correct: true },
+      { who: 'Tutor', text: 'Correct — the description IS the interface the agent reasons over. A good one states three things: when to use it (purpose), what each parameter means (unambiguous — user_id, not user), and what it returns. Plus: make implicit context explicit ("describe it to a new hire") and namespace by service (asana_search). Small tweaks → big accuracy gains: description quality = call accuracy. HW lens: a vague register spec → mis-use. APPLY: improve run(q) "Runs a query" — give a better name, a one-line description (including when to use it), and clear parameter names.' },
+      { who: 'Nick', text: 'run_sim_vcs(test_id), "vcs simulation for specific test case".' },
+      { who: 'Tutor', text: 'Big step up — the name says what it does, test_id is a clear parameter, and vcs namespaces it. One more thing: a tool must also state what it RETURNS (the agent plans its next step from the return, and it should be high-signal). Complete form: vcs_run_sim(test_id) — "Run a VCS simulation for one test case (by test_id). Returns pass/fail, a coverage summary, and the log path. Use to run or reproduce a single test." So: when + parameters + returns. Second half: you now have 40 well-named tools. A teammate says "more tools = more capable." Is that right, and what goes wrong with too many?' },
+      { who: 'Nick', text: 'Every step it has to spend effort finding which tool it can use. Even with many tools as assets, it would be good to arrange things so only a limited set is usable in a given situation.', correct: true },
+      { who: 'Tutor', text: 'Right — the selection cost/distraction, and your scoping idea is a real lever. Named failure: too many tools (especially overlapping ones) derail tool selection. Two mitigations: (1) consolidation — fold low-level ops into one high-level tool (schedule_meeting = find availability + book + invite), moving the chaining into the tool; (2) scope the toolset to the situation (your idea). This is the D1 simplicity trap a third time: more autonomy → more agents → more tools. HW lens: one high-level configure_and_start(mode) transaction instead of five low-level register pokes.' }
+    ]
+  },
+  {
+    id: 't-d2-s3', dom: 'D2', ses: 'S3', date: '2026-07-20', title: 'Responses & Structured Errors (interactive)',
+    note: 'English translation of the original Korean session.',
+    turns: [
+      { who: 'Tutor', text: 'High-signal responses you already have (S1–S2). The new piece is errors. An agent calls vcs_run_sim(test_id) with a non-existent id. Two error responses: A = {error:"500"}. B = {error:"No test found with id ‘tc_9987’. Valid ids look like ‘test_<name>’. Call list_tests() to see what is available."} The agent is in a loop and just got this. Which leads to a better outcome, and what does A make the agent do? (recall the agentic loop: act → verify → repeat.)' },
+      { who: 'Nick', text: 'B is good. With A’s message, unless there is a registered reference/index error manual it is useless — the agent would just say "error" to the upper orchestrator or the user and leave the loop.', correct: true },
+      { who: 'Tutor', text: 'Correct and sharp — an opaque code demands outside knowledge the agent lacks, so it cannot self-recover and must escalate or give up. Crystal: an error is feedback (act → verify → repeat). A structured, actionable error — what went wrong + how to fix + a cheap recovery path — lets the agent fix its call and continue; an opaque code causes blind retries or escalation. Your nuance is a design principle: make recoverable errors actionable so the agent self-corrects, and escalate cleanly only when it is truly unrecoverable (which ties back to stop conditions and HITL). HW lens: 500 = a bare exit code; a structured error = an assertion with file/line/expected-vs-actual + a hint.' }
+    ]
   }
 ];
 
