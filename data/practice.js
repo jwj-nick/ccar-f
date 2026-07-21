@@ -8,6 +8,7 @@ window.CCAR_PRACTICE = {
  "items": [
   {
    "id": "d2-2.1-choice-01",
+   "kind": "domain",
    "domain": "D2",
    "format": "choice",
    "scenario": "customer-support",
@@ -47,6 +48,7 @@ window.CCAR_PRACTICE = {
   },
   {
    "id": "d2-2.2-choice-01",
+   "kind": "domain",
    "domain": "D2",
    "format": "choice",
    "scenario": "multi-agent-research",
@@ -92,6 +94,7 @@ window.CCAR_PRACTICE = {
   },
   {
    "id": "d2-2.2-recall-01",
+   "kind": "domain",
    "domain": "D2",
    "format": "recall",
    "scenario": null,
