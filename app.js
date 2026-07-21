@@ -29,7 +29,7 @@
   });
 
   /* ---------- tabs ---------- */
-  var TABS = [{ h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }, { h: '#/transcripts', t: 'Transcripts' }, { h: '#/glossary', t: 'Glossary' }]
+  var TABS = [{ h: '#/guide', t: 'Guide' }, { h: '#/practice', t: 'Practice' }, { h: '#/overview', t: 'Overview' }, { h: '#/journal', t: 'Journal' }, { h: '#/lessons', t: 'Lessons' }, { h: '#/transcripts', t: 'Transcripts' }, { h: '#/glossary', t: 'Glossary' }]
     .concat(C.DOMAINS.map(function (d) { return { h: '#/' + d.id, t: d.code }; }))
     .concat([{ h: '#/resources', t: 'Resources' }]);
   function renderTabs(active) {
@@ -274,11 +274,16 @@
 
   /* ---------- router ---------- */
   function route() {
-    var hash = location.hash || '#/overview';
+    var hash = location.hash || '#/guide';
     var key = hash.replace('#/', '');
+    var anchor = null;
+    if (key.indexOf('guide/') === 0) { anchor = key.slice(6); key = 'guide'; hash = '#/guide'; }
     var html, active = hash;
+    var GU = window.CCARF_GUIDE;
     var d = byId(key);
-    if (d) { html = domain(d); }
+    if (key === 'guide' && GU) { html = GU.guide(); active = '#/guide'; }
+    else if (key === 'practice' && GU) { html = GU.practice(); active = '#/practice'; }
+    else if (d) { html = domain(d); }
     else if (key === 'journal') { html = journal(); active = '#/journal'; }
     else if (key === 'lessons') { html = lessons(); active = '#/lessons'; }
     else if (key === 'transcripts') { html = transcripts(); active = '#/transcripts'; }
@@ -287,7 +292,13 @@
     else { html = overview(); active = '#/overview'; }
     view.innerHTML = html;
     renderTabs(active);
-    fmeta.innerHTML = 'Based on Anthropic Academy (13 free courses) · draft ' + esc(C.META.version) + ' · ' + esc(C.META.updated);
+    fmeta.innerHTML = 'Guide &amp; Practice are grounded in the official CCAR-F Exam Guide v1.0 · other tabs are study notes · '
+      + esc(C.META.version) + ' · ' + esc(C.META.updated);
+    if (GU && GU.runMermaid) GU.runMermaid();
+    if (anchor) {
+      var el = document.getElementById('g-' + anchor);
+      if (el) { el.scrollIntoView(); return; }
+    }
     window.scrollTo(0, 0);
     document.title = (d ? d.code + ' ' + d.name + ' — ' : '') + 'CCAR-F Study';
   }

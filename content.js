@@ -1,16 +1,18 @@
 /* CCAR-F Study — content (data layer). Vanilla, no build.
- * Draft (v0.2, English-only). Distilled from official sources; task-statement wording pending the official exam guide.
+ * Draft (v0.3, English-only). Domain notes distilled from official sources.
+ * NOTE: exam facts and the task-statement blueprint now live in the compiled Guide tab (data/content.js),
+ * verified against the official Exam Guide v1.0. This file is legacy study notes, migrating to markdown source.
  * Sources: docs.claude.com · anthropic.com/engineering · modelcontextprotocol.io */
 
 const META = {
-  version: 'v0.2 · draft',
+  version: 'v0.3 · notes',
   updated: '2026-07-13',
   exam: [
-    { v: '60', l: 'questions (scenario-based)' },
+    { v: '60', l: 'items · choice + multi-response' },
     { v: '4 / 6', l: 'scenarios drawn at random' },
     { v: '720', l: 'pass mark / 1000' },
     { v: '120min', l: 'time limit' },
-    { v: 'closed-book', l: 'no AI · proctored' }
+    { v: '$125', l: 'fee · valid 12 months' }
   ],
   note: 'The exam is closed-book and scenario-based — it tests architectural judgment under constraints, not memorization.'
 };
@@ -332,7 +334,7 @@ const DOMAINS = [
 
   {
     id: 'd5', code: 'D5', name: 'Context Management & Reliability', ko: 'context & reliability',
-    weight: 15, ts: 5, conf: 3, order: 5,
+    weight: 15, ts: 6, conf: 3, order: 5,
     tagline: 'Keeping long interactions alive and production from dying. Smaller weight, but it seeps into every scenario.',
     essence: 'Managing finite context (compaction, external memory, isolation, just-in-time retrieval) and making long tasks and failures robust.',
     concepts: [
