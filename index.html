@@ -1,39 +1,86 @@
-<!doctype html>
-<html lang="en">
-<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CCAR-F Study — Claude Certified Architect · Foundations</title>
-<meta name="description" content="Study atlas for the CCAR-F (Claude Certified Architect – Foundations) exam: what to study, what to practice, and which official & free materials to use across the 5 domains. Unofficial study aid.">
+<title>CCAR-F Study</title>
+<meta name="description" content="Two companions for the Claude Certified Architect – Foundations exam: a study reference grounded in the official exam guide, and a public learning journal. Unofficial.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AD%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+
 <header class="top">
   <div class="top-in">
-    <a class="brand" href="#/guide">CCAR-F<span>·</span>Study</a>
-    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+    <a class="brand" href="./">CCAR-F<span>·</span>Study</a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="study/">Study</a>
+      <a href="journal/">Journal</a>
+    </nav>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle theme">◐ theme</button>
   </div>
 </header>
-<main id="view"><!-- rendered by app.js --></main>
+
+<main id="view">
+  <section>
+    <span class="eyebrow">Claude Certified Architect – Foundations</span>
+    <h1>Two companions for one exam</h1>
+    <p class="lede">One is about <b>the exam</b> — what it tests, stated in its own terms and traceable to the
+      official guide. The other is about <b>learning it</b> — a public record of one engineer working through the
+      material, wrong turns included. They are kept apart on purpose: the first is a reference you can trust,
+      the second is a diary you can follow.</p>
+  </section>
+
+  <section class="block">
+    <div class="hubcards">
+      <a class="hubcard" href="study/">
+        <div class="hcicon">📘</div>
+        <h2>Study</h2>
+        <p class="hcsub">The exam, on its own terms</p>
+        <p class="hcbody">Exam format and scoring · the blueprint of <b>30 task statements</b> · the 6 scenarios ·
+          what is explicitly <b>out of scope</b> · judgment drills with explanations. Every claim traces to the
+          official exam guide; anything the guide does not support is flagged as such.</p>
+        <div class="hcmeta"><span class="chip">official-guide grounded</span><span class="chip">English + KO</span></div>
+      </a>
+      <a class="hubcard" href="journal/">
+        <div class="hcicon">📗</div>
+        <h2>Journal</h2>
+        <p class="hcsub">One engineer learning it in public</p>
+        <p class="hcbody">The next problem to solve · session-by-session lessons · <b>raw interactive transcripts</b>
+          including the wrong answers and their corrections · a growing glossary with recall drill · domain notes
+          written from a 20-year hardware verification lens.</p>
+        <div class="hcmeta"><span class="chip">learn-in-public</span><span class="chip">updated per session</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>How they differ</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th></th><th>Study</th><th>Journal</th></tr></thead>
+      <tbody>
+        <tr><td><b>Answers</b></td><td>What does the exam test, and where are the boundaries?</td><td>What did it take to actually understand it?</td></tr>
+        <tr><td><b>Source</b></td><td>The official Exam Guide v1.0, read end to end</td><td>Live study sessions</td></tr>
+        <tr><td><b>Changes when</b></td><td>Material is authored and source-verified</td><td>Every study session</td></tr>
+        <tr><td><b>Trust it for</b></td><td>Facts, scope, and item practice</td><td>Intuition, analogies, and how a concept finally landed</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+</main>
+
 <footer class="f">
-  <div><b>CCAR-F Study</b> — unofficial study aid. Facts are grounded in <a href="https://docs.claude.com" target="_blank" rel="noopener">docs.claude.com</a> · <a href="https://anthropic.skilljar.com" target="_blank" rel="noopener">Anthropic Academy</a>. A personal learn-in-public project, not affiliated with Anthropic.</div>
-  <div style="margin-top:8px" id="fmeta"></div>
+  <div><b>CCAR-F Study</b> — an unofficial, personal learn-in-public project. Not affiliated with Anthropic.
+    Grounded in the official exam guide and <a href="https://docs.claude.com" target="_blank" rel="noopener">docs.claude.com</a>.
+    Official exam questions are never reproduced.</div>
 </footer>
-<!-- vendored locally so the app runs offline from file:// -->
-<script src="vendor/marked.min.js"></script>
-<script src="vendor/mermaid.min.js"></script>
-<!-- generated by 30_drill_app/build/compile.mjs — do not hand-edit -->
-<script src="data/content.js"></script>
-<script src="data/practice.js"></script>
-<!-- hand-maintained study notes (migrating to compiled markdown) -->
-<script src="content.js"></script>
-<script src="journal.js"></script>
-<script src="lessons.js"></script>
-<script src="transcript.js"></script>
-<script src="glossary.js"></script>
-<script src="guide.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+
+<script>
+(function () {
+  function applyTheme(t) {
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  try { var st = localStorage.getItem('ccarf-theme'); if (st) applyTheme(st); } catch (e) {}
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var mqDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = cur ? (cur === 'dark' ? 'light' : 'dark') : (mqDark ? 'light' : 'dark');
+    applyTheme(next); try { localStorage.setItem('ccarf-theme', next); } catch (e) {}
+  });
+})();
+</script>

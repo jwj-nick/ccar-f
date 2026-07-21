@@ -1,24 +1,45 @@
 # CCAR-F Study
 
-A study atlas for the **Claude Certified Architect – Foundations (CCA-F)** exam — for each of the 5 domains: *what to study, what to practice, and which official & free materials to dig into*, in one place.
+Two companions for the **Claude Certified Architect – Foundations (CCAR-F)** exam.
+Live: **https://jwj-nick.github.io/ccar-f/**
 
-> ⚠️ **Unofficial** personal learn-in-public project. Not affiliated with Anthropic. Facts are grounded in [docs.claude.com](https://docs.claude.com) · [Anthropic Academy](https://anthropic.skilljar.com). Draft — refined as study progresses. English-only.
+> ⚠️ **Unofficial** personal learn-in-public project. Not affiliated with Anthropic.
+> Facts are grounded in the official *CCAR-F Exam Guide v1.0* and [docs.claude.com](https://docs.claude.com).
+> Official exam questions are never reproduced — every practice item is written against the published task-statement objectives.
 
-## What's inside
-- **Overview** — exam facts, domain weighting, official learning path (7 Academy courses), study loop, 6 scenarios, 10-week plan.
-- **Journal** — the next problem to solve, progress, spaced review, session timeline.
-- **Domains D1–D5** — key concepts · easily-confused terms · exam judgment points · common traps · a worked scenario · self-check · study/practice · resources.
-- **Resources** — official (Academy · docs · engineering posts) + free (WikiDocs prep book · GitHub multi-language guides).
+| | |
+|---|---|
+| **📘 [Study](https://jwj-nick.github.io/ccar-f/study/)** | The exam on its own terms: format and scoring, the blueprint of **30 task statements**, the 6 scenarios, what is explicitly out of scope, and judgment drills with full explanations. Every claim traces to the official guide; anything the guide does not support is flagged. |
+| **📗 [Journal](https://jwj-nick.github.io/ccar-f/journal/)** | One engineer learning it in public: the next problem to solve, session lessons, **raw interactive transcripts including wrong answers and their corrections**, a glossary recall drill, and domain notes written from a 20-year hardware-verification lens. |
 
-## Tech
-Vanilla HTML/CSS/JS, no build, mobile-first, light/dark. Data lives in `content.js` and `journal.js` — update those as study progresses.
+## Structure
 
 ```
-index.html · styles.css · app.js · content.js · journal.js
+index.html          hub — two cards, shared theme toggle
+styles.css          shared stylesheet
+vendor/             marked · mermaid (vendored so everything works offline)
+study/              index.html · app.js · guide.js · data/{content,practice}.js
+journal/            index.html · app.js · data/journal.js
 ```
 
-## Run locally
-Static files — open `index.html` in a browser (or `python -m http.server`).
+Vanilla HTML/CSS/JS. **No build step in this repo, no server, no network at runtime.**
+Data is injected as plain `<script>` globals, so both apps open by double-clicking their `index.html` from disk.
 
-## Copyright
-Official course text and exam questions are not copied — linked instead. Content is a summary distilled from public sources.
+## Where the content comes from
+
+**`data/` directories are generated. Do not hand-edit them.**
+Sources live in a separate private study workspace and are compiled by `30_drill_app/build/compile.mjs`:
+
+| Generated | Source |
+|---|---|
+| `study/data/content.js` · `study/data/practice.js` | `30_drill_app/{content,practice}/**.md` |
+| `journal/data/journal.js` | `00_META/app_feed/**.md` |
+
+Only `status: reviewed` material ships — an item counts as reviewed once it is verified against the
+official guide and, for multiple-choice items, once its answer key has been **independently re-derived**
+by a reviewer who has not seen the key.
+
+## License / use
+
+Personal study material shared in the hope it helps someone else prepare.
+The official exam guide is Anthropic's; it is linked, never copied.
