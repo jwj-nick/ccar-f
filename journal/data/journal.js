@@ -6,46 +6,46 @@ window.CCARJ = {
  "generated_by": "30_drill_app/build/compile.mjs",
  "include_draft": false,
  "journal": {
-  "updated": "2026-07-20",
-  "streak": 4,
-  "location": "W1→W2 · D2 in progress (S1–S4 done)",
+  "updated": "2026-07-22",
+  "streak": 5,
+  "location": "W2 · D2 wrapped (4/5) · 9/30 task statements covered",
   "next": {
-   "dom": "D2",
-   "ses": "S5",
-   "title": "MCP transport & security — stdio vs SSE/HTTP, prompt injection",
-   "problem": "When do you use stdio vs SSE/HTTP transport for an MCP server? And since tools are the risk surface, what are the security concerns — trust boundaries, permissions, and prompt injection — when an agent connects to external servers?",
-   "hint": "Extends \"tools are where side effects live.\" A remote, multi-user server has different trust and transport needs than a local process. Bring your interface/security instinct."
+   "dom": "D3",
+   "ses": "S1",
+   "title": "Configuring project memory — hierarchy, scoping, and modular organisation",
+   "problem": "A new teammate clones the repo and Claude ignores conventions the rest of the team takes for granted. Where do project instructions live, which level is shared through version control and which is not, and how do you keep one giant instruction file from swallowing your context?",
+   "hint": "There are user-, project-, and directory-level layers, and one of them is deliberately *not* shared — that asymmetry is the classic diagnostic. Then: importing modular files, splitting conventions by topic, and checking what actually got loaded. Your daily Claude Code practice is the raw material; this session formalises it."
   },
   "progress": [
    {
     "code": "D1",
     "label": "agent design & orchestration",
-    "conf": 4,
-    "target": 4
+    "conf": null,
+    "target": 3.5
    },
    {
     "code": "D3",
     "label": "Claude Code",
-    "conf": 3,
-    "target": 4
+    "conf": null,
+    "target": 3
    },
    {
     "code": "D4",
     "label": "prompting & structured output",
-    "conf": 2,
-    "target": 4
+    "conf": null,
+    "target": 2
    },
    {
     "code": "D2",
     "label": "tool design & MCP",
-    "conf": 2,
-    "target": 4
+    "conf": null,
+    "target": 3.5
    },
    {
     "code": "D5",
     "label": "context & reliability",
-    "conf": 2,
-    "target": 4
+    "conf": null,
+    "target": 2
    }
   ],
   "reviewDue": [
@@ -80,6 +80,30 @@ window.CCARJ = {
    {
     "item": "complexity ladder = start at the lowest rung; climb only when forced (path unpredictable → agent / independent+breadth+over-one-window → multi)",
     "when": "Jul 20 · Jul 22 · Jul 26"
+   },
+   {
+    "item": "a tool is a contract with a limited-context agent → move the filtering into the tool (search_X over list_X)",
+    "when": "Jul 22 · Jul 26"
+   },
+   {
+    "item": "a good tool description = when to use it + what each parameter means + what it returns (description quality = call accuracy)",
+    "when": "Jul 23 · Jul 27"
+   },
+   {
+    "item": "more tools is not better → consolidate low-level ops into high-level tools, and scope the toolset per role",
+    "when": "Jul 23 · Jul 27"
+   },
+   {
+    "item": "structured error = what went wrong + how to fix + a cheap recovery path → the agent self-recovers (opaque codes do not)",
+    "when": "Jul 23 · Jul 27"
+   },
+   {
+    "item": "MCP = M×N → M+N; host / client / server; classify a primitive by WHO controls it (model→tool, app→resource, user→prompt) — not by read-only",
+    "when": "Jul 23 · Jul 27"
+   },
+   {
+    "item": "producing the English vocabulary unprompted (known weak spot) — drill via the Glossary",
+    "when": "Jul 23 · Jul 27"
    }
   ],
   "sessions": [
@@ -190,10 +214,28 @@ window.CCARJ = {
     "insight": "Without a standard, M agents × N services means M×N bespoke integrations; MCP is the standard that turns this into M+N — write a server once and any MCP host can use it (Anthropic calls it \"a USB-C port for AI\"). Roles: the host is the agent app the user runs; a server is a lightweight program exposing ONE capability; a client is the connector inside the host holding a 1:1 connection to a server (the wiring, not the agent). The three primitives a server exposes are distinguished by WHO controls them: tools = model-controlled actions (the risk surface — where guardrails/HITL apply), resources = app-controlled data read into context (like GET, read-only), prompts = user-controlled templates.",
     "analogy": "MCP = a standard bus (USB/PCIe): a device implements the standard once and plugs into any compliant host — no custom glue per pair.",
     "result": "Classified tools/resources/prompts correctly, but hit the key trap: \"read-only, so it is a resource\" is wrong — the test is control, not side-effects. A model-invoked parameterized DB query is a TOOL even though it only reads. Also: with-MCP integrations = M+N (not just the server count). MCP terms added to the Glossary."
+   },
+   {
+    "date": "2026-07-22",
+    "label": "D2-S5",
+    "mode": "standard",
+    "covered": "scoping a toolset, controlling tool choice at call time, the error contract, and MCP server integration (interactive)",
+    "insight": "Describing tools well is not scoping — every tool stays callable. Real scoping shrinks the available set: role-scoped tool sets, a few genuinely shared cross-cutting tools, and constrained tools replacing over-general ones (18 tools select measurably worse than 4–5). At call time, three settings ordered by constraint: auto (a tool is optional), any (some tool is mandatory, the model picks), forced (this named tool). Errors need a contract, not a message: one uniform \"Operation failed\" erases the only decision that matters — can I retry? Four categories: transient (retry), validation (fix the input and retry), business rule (no — explain and offer an alternative), permission (no — escalate). And an access failure must never be returned as an empty result, or a false negative gets promoted to fact with nothing retrying. For MCP: team config ships with the repo, personal config does not; secrets go in environment variables, never the file; and connecting a server spends tool budget because all of its tools go live at once.",
+    "analogy": "Error categories map onto the verification world — a transient glitch, a protocol violation, a policy violation, and an access denial each demand a different response; collapsing them into one message destroys the response.",
+    "result": "Solid on error triage, access-failure-vs-empty, and MCP config scoping. Two corrections: a malformed parameter should be fixed and retried, not filled with a guessed default (that fabricates data); and `tool_choice` \"any\" vs forced got swapped twice — anchored by constraint count and logged for re-drill. D2 is now 4/5, with built-in tools moving to D3."
    }
   ]
  },
  "lessons": [
+  {
+   "id": "d2-s5",
+   "dom": "D2",
+   "ses": "S5",
+   "date": "2026-07-22",
+   "title": "Scoping Tools, Error Contracts, and MCP Integration",
+   "goal": "Scope a toolset for real, control tool selection at call time, give errors a contract the agent can act on, and integrate MCP servers without leaking secrets or blowing the tool budget.",
+   "body": "## Scoping a toolset — the real method\n\nDescribing tools well is not scoping. Organising them into neat categories still leaves every tool callable, so the model can still pick the wrong one. Real scoping shrinks the *available set*:\n\n- **Role-scoped tool sets** — give each agent only the tools its job needs. Tools outside an agent's specialty get misused (a synthesis agent attempting a web search).\n- **A few cross-cutting tools** — share only what several roles genuinely need often (e.g. a fact-verification tool).\n- **Replace over-general tools with constrained ones** — a \"fetch any URL\" tool becomes a \"load a document\" tool.\n\nThe number matters: an agent holding **18 tools selects measurably worse than one holding 4–5**.\n\n## Controlling tool choice at call time\n\nThree settings, ordered by how much they constrain the model:\n\n- **auto** — the model decides *whether* to use a tool at all; it may reply with text only.\n- **any** — the model *must* call some tool (no text-only reply), but it chooses which one.\n- **forced (a named tool)** — the model must call *that specific* tool. Useful when a step must always run first, e.g. extracting metadata before enrichment.\n\nDeciding question: **does the requirement name a specific tool?** If yes → forced. If it only says \"return via a tool, not prose\" → any. If tool use itself is optional → auto.\n\n## Errors need a contract, not a message\n\nOne uniform `{\"error\": \"Operation failed\"}` erases the single decision the agent must make: **can I retry this?** Four situations that look identical without a contract:\n\n| Situation | Category | Retryable? | What the agent should do |\n|---|---|---|---|\n| Network timed out | transient | yes | retry a bounded number of times, then propagate |\n| Malformed date parameter | validation | yes | **fix the input** and retry |\n| Refund exceeds the policy limit | business rule | no | explain in customer-friendly terms; offer an alternative or escalate |\n| No permission on the account | permission | no | escalate immediately — retrying cannot change permission |\n\nSo a tool result should carry: **an error flag · the category · whether it is retryable · a human-readable explanation.**\n\n**Do not invent values to get past a validation error.** Filling a malformed field with a default or guessed value fabricates data that then flows silently downstream. Correct the input instead. (Different case: if the information simply is not in the source, retrying is pointless — that is not a format problem.)\n\n**In multi-agent systems:** a subagent should recover transient errors locally and propagate only what it cannot fix, along with any partial results.\n\n## Access failure is not an empty result\n\nIf a tool fails to reach its data source and returns `{\"results\": []}`, the agent concludes *\"the lookup succeeded and nothing matches\"* — a false negative promoted to fact. Because it looked like success, nothing retries, and a downstream report states confidently that no such record exists. An access failure must come back as an **error** (flag + category + retryable), never as an empty success.\n\n## Integrating MCP servers without shooting yourself\n\n- **Where the config lives is a sharing decision.** Team-wide servers belong in the **project-level** config that ships with the repo, so everyone who clones it gets the server. Personal or experimental servers belong in the **user-level** config, which is not version-controlled.\n- **Never put the secret in the file.** Reference it by **environment-variable expansion**; each person sets the token in their own environment. Committing a token leaks the credential to everyone with repo access — and it stays in git history even after you delete it. (Secondary damage: a shared token destroys per-user attribution.)\n- **Connecting a server spends tool budget.** When a server connects, all of its tools become discoverable and usable at once. Five servers exposing eight tools each means forty live tools — far past the 4–5 sweet spot, so selection reliability collapses. Adding a server is not free; connect only what is needed and scope by role.\n- **Expose content catalogs as resources.** Issue summaries, document hierarchies, DB schemas offered as resources let the agent see what exists instead of probing with exploratory tool calls.\n- **Weak MCP tool descriptions lose to built-in tools.** If the description is thin, the agent falls back to the familiar built-in tool and your server goes unused — description quality decides selection here too.\n- **Prefer community servers for standard integrations;** build a custom server only for workflows unique to your team."
+  },
   {
    "id": "d2-s2",
    "dom": "D2",
@@ -295,6 +337,15 @@ window.CCARJ = {
   }
  ],
  "transcripts": [
+  {
+   "id": "t-d2-s5",
+   "dom": "D2",
+   "ses": "S5",
+   "date": "2026-07-22",
+   "title": "Scoping, tool_choice, Error Contracts, MCP Integration (interactive)",
+   "note": "English translation of the original Korean session. First session after the blueprint realignment — topics are now mapped to official task statements.",
+   "body": "**Tutor:** You asked how scoping actually works — whether grouping tools into an explanatory paragraph by category is enough. It helps, but it is not scoping: every tool is still callable, so the model can still pick the wrong one. Real scoping shrinks the available set — role-scoped tool sets, a few genuinely shared cross-cutting tools, and replacing over-general tools with constrained ones. The number matters: 18 tools select measurably worse than 4–5. Now the call-time control, `tool_choice`: **auto** = the model decides whether to use a tool at all (text-only allowed); **any** = it must call some tool, but chooses which; **forced** = it must call a specific named tool. APPLY: (a) an assistant that usually just answers but may search; (b) an extraction pipeline that must always return structured data via a tool, never prose; (c) a pipeline where the first step must always be extract_metadata.\n\n**Nick (wrong):** a — auto, b — forced, c — any.\n\n**Tutor:** (a) correct. (b) and (c) are swapped. \"Must return via a tool, never prose\" does not name a tool → that is **any**. \"The first step must be extract_metadata\" names the tool → that is **forced**. Deciding question: does the requirement name a specific tool? Yes → forced; no, just \"a tool not prose\" → any; tool use optional → auto.\n\n**Tutor:** Re-check: the model must call a tool, but which of three is up to the model — which value?\n\n**Nick (wrong):** auto.\n\n**Tutor:** It is **any** — the key words were \"must call a tool.\" Anchor by how much each constrains: auto = no constraint (\"decide for yourself\"); any = one constraint (\"a tool, yes — which one is yours to pick\"; the English word *any* means \"any one of them, but one\"); forced = two constraints (\"this tool, no choice\"). Logged as a weak spot to re-drill.\n\n**Tutor:** Error contracts. Your agent receives the identical response `{\"error\": \"Operation failed\"}` in four different situations: (a) network timeout, (b) malformed date, (c) refund exceeds the policy limit, (d) no permission on the account. What decision can the agent no longer make, and how should the four differ?\n\n**Nick:** \"Operation failed\" is too generic — no specific interpretation is possible.\n\n**Tutor:** Correct, and narrowing it to one word: the decision it erases is **\"can I retry this?\"** Now fill in the table: retry yes/no and what to do, for each of the four.\n\n**Nick:** (a) retry a few times; if unresolved, return an error — do something else or stop. (b) no retry needed; fill with a default/estimated value and warn, continue other work. (c) stop; decide the refund is not allowed and run the corresponding routine. (d) retry once, return to the user.\n\n**Tutor:** (a) and (c) correct. (b) is the trap: a malformed date is the agent's own mistake, so the right move is **fix the input and retry** — validation errors ARE retryable once corrected. Filling in a default or estimated value **fabricates data** that flows silently downstream (the same antipattern appears in structured extraction, where a model invents a value to satisfy a required field). Different case: if the information is genuinely absent from the source, retrying is pointless — that is not a format problem. (d) permission does not change on retry, so even one retry is meaningless — escalate immediately. Official categories: **transient / validation / business rule / permission**, and a tool result should carry an error flag, the category, whether it is retryable, and a human-readable explanation. In multi-agent systems a subagent recovers transient errors locally and propagates only what it cannot fix, with partial results.\n\n**Tutor:** Last piece: a search tool fails to reach its data source and returns `{\"results\": []}` instead of an error. What goes wrong — what false conclusion does the agent reach?\n\n**Nick (correct):** It can be misread as \"access succeeded and the empty value is the right answer.\"\n\n**Tutor:** Exactly — a false negative promoted to fact. And because it looked like success, nothing retries, so a downstream report states confidently that no such record exists. Access failure must return an error (flag + category + retryable), never an empty success.\n\n**Tutor:** MCP integration. Your team uses an internal Jira MCP server and the config needs an API token. (1) Where do you put the config so the whole team gets it — and where would a personal, experimental server go? (2) What happens if you write the token straight into the config file, and how do you avoid it?\n\n**Nick (correct):** The API token should be set up once by each person individually; it does not need sharing. Put a placeholder in the settings file. Personal settings go in the top-level .claude.\n\n**Tutor:** Right instincts, with names: team-wide config goes in the **project-level** file that ships with the repo, so everyone who clones it gets the server; personal/experimental goes in the **user-level** config, which is not version-controlled. Your \"placeholder\" is **environment-variable expansion** — the file references the variable, each person's environment holds the real token. On (2), you said Jira accounts could not be distinguished — true (a shared identity destroys attribution), but the primary risk is bigger: **the secret gets committed, which leaks the credential to everyone with repo access and stays in git history even after deletion.**\n\n**Tutor:** Connect five MCP servers, each exposing eight tools, and all of them become discoverable and usable the moment they connect. Tie that to what you learned about tool count — what happens, and what discipline follows?\n\n**Nick (correct):** Scoping is needed.\n\n**Tutor:** Right, and the arithmetic is brutal: 5 × 8 = forty live tools, when 18 already degrades selection versus 4–5. So **adding a server is not free — it spends tool budget.** Connect only what is needed and scope by role. Three more integration points: expose content catalogs (issue summaries, document hierarchies, DB schemas) as **resources** so the agent sees what exists instead of probing with exploratory calls; **weak MCP tool descriptions lose to the familiar built-in tools**, leaving your server unused; and prefer **community servers** for standard integrations, building custom ones only for workflows unique to your team."
+  },
   {
    "id": "t-d2-s2",
    "dom": "D2",
@@ -651,6 +702,90 @@ window.CCARJ = {
    "dom": "D2",
    "group": "MCP",
    "def": "Which of tool/resource/prompt? Ask who controls it: model → tool (an action), app → resource (data to read), user → prompt (a template). Read-only vs not is NOT the test.",
+   "anchor": null
+  },
+  {
+   "term": "Tool scoping",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "Shrinking the *available* tool set, not just describing tools well: role-scoped sets, a few shared cross-cutting tools, and constrained tools replacing over-general ones. 18 tools select measurably worse than 4–5.",
+   "anchor": null
+  },
+  {
+   "term": "tool_choice: auto",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "The model decides *whether* to use a tool at all; a text-only reply is allowed.",
+   "anchor": "no constraint — \"decide for yourself\""
+  },
+  {
+   "term": "tool_choice: any",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "The model *must* call some tool (no text-only reply), but it chooses which one.",
+   "anchor": "one constraint — \"any one of them, but one\""
+  },
+  {
+   "term": "tool_choice: forced",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "The model must call one *specific named* tool. Use when a step must always run first.",
+   "anchor": "two constraints — \"this tool, no choice\""
+  },
+  {
+   "term": "Error category",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "transient / validation / business rule / permission. A uniform \"Operation failed\" erases the one decision that matters: can I retry?",
+   "anchor": null
+  },
+  {
+   "term": "Retryable flag",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "Whether the agent may retry. transient = yes; validation = yes *after correcting the input*; business rule and permission = no.",
+   "anchor": null
+  },
+  {
+   "term": "Fabricated-value antipattern",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "Filling a field with a default or guessed value to get past a validation error. It invents data that flows silently downstream — fix the input and retry instead.",
+   "anchor": null
+  },
+  {
+   "term": "Access failure ≠ empty result",
+   "dom": "D2",
+   "group": "Tool selection & error contracts",
+   "def": "A tool that cannot reach its source must return an error, never `{\"results\": []}`. An empty success becomes a false negative promoted to fact, and nothing retries because it looked like success.",
+   "anchor": null
+  },
+  {
+   "term": "Project vs user config scope",
+   "dom": "D2",
+   "group": "MCP integration",
+   "def": "Team-wide MCP servers go in the project-level config that ships with the repo (everyone who clones gets them); personal or experimental servers go in the user-level config, which is not version-controlled.",
+   "anchor": null
+  },
+  {
+   "term": "Environment-variable expansion",
+   "dom": "D2",
+   "group": "MCP integration",
+   "def": "The config references a variable instead of the secret; each person's environment holds the real token. Committing a token leaks it to everyone with repo access and stays in git history.",
+   "anchor": null
+  },
+  {
+   "term": "Tool budget",
+   "dom": "D2",
+   "group": "MCP integration",
+   "def": "Connecting a server makes all of its tools discoverable at once. Five servers × eight tools = forty live tools, far past the 4–5 sweet spot. Adding a server is not free.",
+   "anchor": null
+  },
+  {
+   "term": "Resources as a content catalog",
+   "dom": "D2",
+   "group": "MCP integration",
+   "def": "Exposing issue summaries, document hierarchies, or DB schemas as resources lets the agent see what exists instead of probing with exploratory tool calls.",
    "anchor": null
   }
  ]
