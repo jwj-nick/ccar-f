@@ -6,15 +6,15 @@ window.CCARJ = {
  "generated_by": "30_drill_app/build/compile.mjs",
  "include_draft": false,
  "journal": {
-  "updated": "2026-07-22",
-  "streak": 5,
-  "location": "W2 · D2 wrapped (4/5) · 9/30 task statements covered",
+  "updated": "2026-07-23",
+  "streak": 6,
+  "location": "W2 · D3 in progress (3/6) · 12/30 task statements covered",
   "next": {
    "dom": "D3",
-   "ses": "S1",
-   "title": "Configuring project memory — hierarchy, scoping, and modular organisation",
-   "problem": "A new teammate clones the repo and Claude ignores conventions the rest of the team takes for granted. Where do project instructions live, which level is shared through version control and which is not, and how do you keep one giant instruction file from swallowing your context?",
-   "hint": "There are user-, project-, and directory-level layers, and one of them is deliberately *not* shared — that asymmetry is the classic diagnostic. Then: importing modular files, splitting conventions by topic, and checking what actually got loaded. Your daily Claude Code practice is the raw material; this session formalises it."
+   "ses": "S4",
+   "title": "Plan mode vs direct execution",
+   "problem": "Some changes you should let Claude just do; others you want it to think through and show you a plan before touching anything. Where is the line — and how do you keep a big investigation from flooding the working conversation?",
+   "hint": "Plan mode fits large or multi-file changes, several plausible approaches, and architectural decisions — a safe place to explore before committing. Direct execution fits small, well-scoped fixes. And an Explore subagent isolates verbose exploration so the main conversation stays clean. You can combine them: investigate in plan, then execute directly."
   },
   "progress": [
    {
@@ -27,7 +27,7 @@ window.CCARJ = {
     "code": "D3",
     "label": "Claude Code",
     "conf": null,
-    "target": 3
+    "target": 3.5
    },
    {
     "code": "D4",
@@ -223,10 +223,64 @@ window.CCARJ = {
     "insight": "Describing tools well is not scoping — every tool stays callable. Real scoping shrinks the available set: role-scoped tool sets, a few genuinely shared cross-cutting tools, and constrained tools replacing over-general ones (18 tools select measurably worse than 4–5). At call time, three settings ordered by constraint: auto (a tool is optional), any (some tool is mandatory, the model picks), forced (this named tool). Errors need a contract, not a message: one uniform \"Operation failed\" erases the only decision that matters — can I retry? Four categories: transient (retry), validation (fix the input and retry), business rule (no — explain and offer an alternative), permission (no — escalate). And an access failure must never be returned as an empty result, or a false negative gets promoted to fact with nothing retrying. For MCP: team config ships with the repo, personal config does not; secrets go in environment variables, never the file; and connecting a server spends tool budget because all of its tools go live at once.",
     "analogy": "Error categories map onto the verification world — a transient glitch, a protocol violation, a policy violation, and an access denial each demand a different response; collapsing them into one message destroys the response.",
     "result": "Solid on error triage, access-failure-vs-empty, and MCP config scoping. Two corrections: a malformed parameter should be fixed and retried, not filled with a guessed default (that fabricates data); and `tool_choice` \"any\" vs forced got swapped twice — anchored by constraint count and logged for re-drill. D2 is now 4/5, with built-in tools moving to D3."
+   },
+   {
+    "date": "2026-07-23",
+    "label": "D3-S1",
+    "mode": "standard",
+    "covered": "CLAUDE.md hierarchy, scoping, and modular organisation (interactive)",
+    "insight": "Project instructions live at three levels — user (not shared through version control), project (ships with the repo, so anyone who clones it gets it), and directory (applies to a subtree). The classic diagnostic \"it works for me but not for a new teammate\" almost always means the conventions were placed at the user level; the fix is to move shared conventions to the project level. Split a bloated instruction file into topic files pulled in by import, or a rules folder. Choose CLAUDE.md/rules for always-on universal standards (code style, commit format, review criteria) and a skill for an on-demand procedure — a commit-format rule made into a skill would simply never fire when it is needed. Verify what actually loaded with /memory instead of guessing.",
+    "analogy": "\"Works on my machine, not theirs\" is a shared-vs-local config bug — the rules were on individual machines, not in the repo.",
+    "result": "Nick diagnosed it immediately (the conventions were only on existing teammates' machines) and reasoned toward per-topic files loaded on demand."
+   },
+   {
+    "date": "2026-07-23",
+    "label": "D3-S2",
+    "mode": "standard",
+    "covered": "custom slash commands and skills — where they live and how a skill is configured (interactive)",
+    "insight": "Commands and skills follow the same layering as CLAUDE.md: team-wide in the repo's project folder, personal at the user level. A skill is an on-demand capsule of procedure, shaped by three switches. context: fork runs it in an isolated subagent, so a huge, verbose job (thousands of log lines) is consumed in that isolated context and only a clean result returns to the main conversation — the D1-S4 context-isolation idea reappearing at the Claude Code level. allowed-tools restricts which tools the skill may use (D2 tool-scoping plus the D1-S5 guardrail). argument-hint tells Claude what to ask for when the skill is invoked without arguments.",
+    "analogy": "context: fork = a subagent with its own scratchpad; allowed-tools = a guardrail bounding what the skill can touch.",
+    "result": "Nick reasoned the fork mechanism out from first principles (\"verbose output fills the session; the tool should do the analysis outside and return only a clean result\") before being given the name, and named tool-scoping for the second switch himself."
+   },
+   {
+    "date": "2026-07-23",
+    "label": "D3-S3",
+    "mode": "standard",
+    "covered": "path-specific rules for conditional convention loading (interactive)",
+    "insight": "When a convention applies to a file *type* scattered across many directories (test files living next to source, or every .py file in the repo), a directory-level CLAUDE.md cannot capture it — you would have to copy it into every directory. Instead attach a path pattern to a rule file so it loads only when a matching file is edited (**/*.test.* → the testing convention). Benefits: it works regardless of where the files sit, and irrelevant conventions never load, saving context and tokens. The distinguisher: conventions neatly contained in one subtree → directory CLAUDE.md; conventions that ride a scattered file type → path-conditional rules.",
+    "analogy": "A directory CLAUDE.md is a rule pinned to a location; a path-conditional rule is a rule pinned to a file *kind*, wherever it lives.",
+    "result": "Corrected one belief (directory-level CLAUDE.md does exist), then Nick's own instinct — \"tell it when to read which document\" — turned out to be exactly the path-pattern mechanism; he confirmed it on the .py case."
    }
   ]
  },
  "lessons": [
+  {
+   "id": "d3-s1",
+   "dom": "D3",
+   "ses": "S1",
+   "date": "2026-07-23",
+   "title": "CLAUDE.md Hierarchy, Scoping, and Modular Organisation",
+   "goal": "Place project instructions at the right level, split a bloated instruction file, and verify what actually loaded.",
+   "body": "## The three levels — and which one is shared\n\nProject instructions live at three levels:\n\n- **User** (your home config) — **not shared through version control**; it exists only on your machine.\n- **Project** (in the repo) — **ships with the repo**, so anyone who clones it gets it.\n- **Directory** (a CLAUDE.md in a subfolder) — applies to that subtree.\n\n## The classic diagnostic\n\n\"Claude follows our conventions for me, but a new teammate who just cloned the repo gets none of them.\" Almost always this means the conventions were placed at the **user level** — the existing team each set them up locally, but they never traveled with the repo. The fix: move shared conventions to the **project level**. Whenever a symptom is \"works for me, not for them,\" suspect user-level configuration first, and check with `/memory`, which shows which memory files actually loaded — don't guess.\n\n## Splitting a bloated file\n\nA single 500-line instruction file mixing frontend, testing, deployment, and style conventions is hard to maintain and wastes context. Split it into topic files pulled in by **import** (the project CLAUDE.md becomes a thin table of contents), or use a **rules folder** of per-topic files.\n\n## CLAUDE.md/rules vs skill\n\n- **CLAUDE.md / rules** = always-on **universal standards** (code style, commit format, review criteria) that must always be in effect.\n- **Skill** = an **on-demand procedure** you invoke when it is relevant.\n\nOne-line test: *is this always enforced, or a procedure you sometimes run?* A commit-format rule turned into a skill would simply never fire at the moment it's needed; a release procedure baked into CLAUDE.md would eat context all the time."
+  },
+  {
+   "id": "d3-s2",
+   "dom": "D3",
+   "ses": "S2",
+   "date": "2026-07-23",
+   "title": "Slash Commands and Skills — Placement and the Three Switches",
+   "goal": "Know where commands and skills live, and configure a skill's isolation, tool access, and argument prompt.",
+   "body": "## Same layering as CLAUDE.md\n\nCustom slash commands and skills follow the layering from S1: **team-wide** ones go in the repo's project folder (shared through version control), **personal** ones go at the user level (not shared). A skill is an **on-demand capsule of procedure**.\n\n## The three switches that shape a skill\n\n- **`context: fork`** — run the skill in an **isolated subagent**. A verbose job (thousands of log lines, stack traces, coverage dumps) is consumed inside that isolated context, and only a clean result returns to the main conversation. This is the D1-S4 context-isolation idea, now at the Claude Code level: don't let a huge tool output pollute the working conversation.\n- **`allowed-tools`** — restrict which tools the skill may use. A test-analysis skill needs read and run, not write or delete. Two lineages meet here: D2 tool-scoping (protect selection reliability) and the D1-S5 guardrail (bound what it can touch).\n- **`argument-hint`** — tell Claude what to ask for when the skill is invoked with no arguments.\n\n## Personal variants\n\nTo adapt a team skill to your own taste, put your version at the **user level under a different name**, so it doesn't overwrite the shared one."
+  },
+  {
+   "id": "d3-s3",
+   "dom": "D3",
+   "ses": "S3",
+   "date": "2026-07-23",
+   "title": "Path-Specific Rules for Conditional Convention Loading",
+   "goal": "Load a convention only when a matching file type is edited, wherever those files live.",
+   "body": "## When a directory CLAUDE.md is not enough\n\nA directory-level CLAUDE.md does exist and applies to its subtree. But it fails when a convention applies to a **file type scattered across many directories** — test files living next to their source (`src/auth/login.test.ts`, `src/api/orders.test.ts`, …), or every `.py` file in the repo. You would have to copy the convention into every directory, which is duplication and a maintenance trap.\n\n## Attach a path pattern instead\n\nGive a rule file a **path pattern** so it loads only when a matching file is edited — e.g. the testing convention loads only on `**/*.test.*`. Editing `orders.test.ts` pulls in the testing rules; editing `login.ts` does not.\n\n**Benefits:** it works **regardless of where the files sit**, and irrelevant conventions never load, **saving context and tokens.**\n\n## The distinguisher\n\n- Convention neatly contained in one subtree → **directory-level CLAUDE.md**.\n- Convention that rides a **scattered file type** (tests beside code, all `.py` files) → **path-conditional rule**.\n\nRule of thumb: a directory CLAUDE.md is pinned to a *location*; a path-conditional rule is pinned to a *file kind*, wherever it lives."
+  },
   {
    "id": "d2-s5",
    "dom": "D2",
@@ -337,6 +391,15 @@ window.CCARJ = {
   }
  ],
  "transcripts": [
+  {
+   "id": "t-d3-s1-s2-s3",
+   "dom": "D3",
+   "ses": "S1-S3",
+   "date": "2026-07-23",
+   "title": "CLAUDE.md Hierarchy, Skills, and Path-Specific Rules (interactive)",
+   "note": "English translation of the original Korean session — three task statements in one sitting. Nick repeatedly reasoned the mechanism out from first principles before being given the name.",
+   "body": "**Tutor (RECALL):** To make the model call a tool but let it choose which one, what is `tool_choice`?\n\n**Nick (wrong):** auto.\n\n**Tutor:** Third miss — the answer is \"any\". Here is the misconception: you were caught by my phrase \"let it choose which one\" — but *the model choosing which tool* is true of BOTH auto and any, so it cannot be the discriminator. The real axis is: **must a tool be called at all?** auto = no (text-only reply allowed); any and forced = yes. auto = tool optional; any = tool mandatory, kind free; forced = mandatory + kind named. Logged (with the misconception) to re-drill.\n\n**Tutor (D3-S1):** Your team works in Claude Code and Claude has followed the team conventions well. A new teammate clones the repo, runs Claude — and it knows none of the conventions. On existing machines it still works. What went wrong, and how do you fix it? (Hint: where were the conventions written, and do they travel with the repo?)\n\n**Nick (correct):** The conventions must have been only on the existing teammates' local machines.\n\n**Tutor:** Exactly. Three levels: user (not shared — each machine), project (shared, travels with a clone), directory (a subtree). The bug: conventions at the user level, so a new teammate has none. Fix: move them to the project level. \"Works for me, not for them\" almost always means user-level placement. Next: you pile all the conventions into one 500-line project file. What breaks, and how do you split it — and how do you check what actually loaded?\n\n**Nick:** Split the conventions into files by kind and load them when needed. What about making it a skill? To know what loaded — build a separate mechanism, or just ask Claude Code?\n\n**Tutor:** Splitting is right — topic files pulled in by import (the CLAUDE.md becomes a thin table of contents) or a rules folder. Your \"load only when needed\" instinct is exactly S3's topic. Skill vs CLAUDE.md: always-on universal standards (style, commit format, review criteria) → CLAUDE.md/rules; an on-demand procedure → skill. A commit-format rule as a skill would never fire when needed. And to see what loaded, \"ask Claude Code\" is right — that is `/memory`; check, don't guess.\n\n**Tutor (D3-S2):** (a) Where do a team-wide slash command and a personal one each live? (b) You build a skill that runs the whole test suite and analyses failures — its output is thousands of lines. What happens if it runs inside the main conversation (recall D1-S4), and how should it run instead?\n\n**Nick (correct):** (a) team → project repo, mine → local .claude or gitignored. (b) it fills the session context; the skill should call a tool that does the analysis and returns only a clean result the session can see.\n\n**Tutor:** (a) correct — same layering as CLAUDE.md. (b) you reasoned the pattern out yourself: \"fills the session context\" = pollutes the main conversation (D1-S4); \"analyse outside, return only the clean result\" = the right architecture. Its name is `context: fork` — run the skill in an isolated subagent; the verbose output is consumed there and only the result returns. Next: unrestricted, that skill could also write, delete, or hit the network. Which D2 concept applies at the skill level?\n\n**Nick (correct):** Isolation? Scoping the tools the skill can use?\n\n**Tutor:** Exactly — skill-level tool scoping, named `allowed-tools`. Two lineages: D2 scoping (selection reliability) + the D1-S5 guardrail (bound what it can touch). So a skill has three switches: `context: fork` (isolated run), `allowed-tools` (restrict tools), `argument-hint` (what to ask for when called with no arguments). Personal variants go at the user level under a different name.\n\n**Tutor (D3-S3):** Test files live next to their source — `src/auth/login.test.ts`, `src/api/orders.test.ts` — scattered across dozens of directories. You want the testing convention to load only when Claude touches a test file. (1) What goes wrong if you try a directory-level CLAUDE.md? (2) How should you do it, and what does it buy you?\n\n**Nick:** A CLAUDE.md is only valid one-per-project-root, so other contexts need differently-named documents introduced from CLAUDE.md — you can give rules like \"when X, read which document.\"\n\n**Tutor:** One correction: CLAUDE.md is not \"one at the root\" — directory-level CLAUDE.md exists and applies to its subtree. But it fails here because the test files are scattered, so you'd copy the convention into every directory. Your second instinct — \"tell it when to read which document\" — is exactly the answer: attach a **path pattern** to a rule file so it loads only when a matching file (`**/*.test.*`) is edited. Benefits: works regardless of location, and irrelevant conventions never load (saving context/tokens). Distinguisher: contained in one subtree → directory CLAUDE.md; a scattered file type → path-conditional rule. Check: \"every .py file must have type hints\" — which one?\n\n**Nick (correct):** Path-conditional rule.\n\n**Tutor:** Correct — `.py` files are scattered across the whole repo, so a subtree-bound directory CLAUDE.md can't catch them; one path pattern (`**/*.py`) does, wherever they live. Your D3-S1 instinct (\"load only when needed\") closed as a real feature three sessions later."
+  },
   {
    "id": "t-d2-s5",
    "dom": "D2",
@@ -786,6 +849,62 @@ window.CCARJ = {
    "dom": "D2",
    "group": "MCP integration",
    "def": "Exposing issue summaries, document hierarchies, or DB schemas as resources lets the agent see what exists instead of probing with exploratory tool calls.",
+   "anchor": null
+  },
+  {
+   "term": "CLAUDE.md hierarchy",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "user (not shared through version control) / project (ships with the repo) / directory (a subtree). \"Works for me, not for a new teammate\" almost always means user-level placement — move shared conventions to the project level.",
+   "anchor": null
+  },
+  {
+   "term": "@import / rules folder",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Split a bloated instruction file into topic files pulled in by import (the CLAUDE.md becomes a thin table of contents), or a per-topic rules folder.",
+   "anchor": null
+  },
+  {
+   "term": "CLAUDE.md vs skill",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Always-on universal standards (style, commit format, review criteria) belong in CLAUDE.md/rules; an on-demand procedure belongs in a skill. Test: always enforced, or a procedure you sometimes run?",
+   "anchor": null
+  },
+  {
+   "term": "/memory",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Shows which memory files actually loaded. Use it to diagnose configuration instead of guessing.",
+   "anchor": null
+  },
+  {
+   "term": "context: fork",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Runs a skill in an isolated subagent so verbose output is consumed there and only a clean result returns to the main conversation.",
+   "anchor": "D1-S4 context isolation, at the Claude Code level"
+  },
+  {
+   "term": "allowed-tools",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Restricts which tools a skill may use.",
+   "anchor": "D2 tool-scoping + the D1-S5 guardrail"
+  },
+  {
+   "term": "argument-hint",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "Tells Claude what to ask for when a skill is invoked with no arguments.",
+   "anchor": null
+  },
+  {
+   "term": "Path-conditional rule",
+   "dom": "D3",
+   "group": "Claude Code configuration",
+   "def": "A rule file with a path pattern (e.g. **/*.test.*) that loads only when a matching file is edited. Beats a directory CLAUDE.md when a convention rides a file type scattered across many directories; irrelevant conventions never load.",
    "anchor": null
   }
  ]
